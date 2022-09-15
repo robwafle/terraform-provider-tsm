@@ -1,3 +1,9 @@
+# env vars to use:
+```
+TANZU_HOST:
+TANZU_APIKEY:
+```
+
 # command to rebuild, install and test
 ```
 pushd ../../terraform-provider-tanzu ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
@@ -13,8 +19,7 @@ terraform apply -input=false tfplan
 ```
 
 
-
-
 ```
 kubectl --context docker-desktop apply -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/operator-deployment.yaml
 ```
+
