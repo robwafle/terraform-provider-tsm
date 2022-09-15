@@ -1,7 +1,7 @@
-# env vars to use:
+# env vars to set on your local system BEFORE opening visual studio.:
 ```
-TANZU_HOST:
-TANZU_APIKEY:
+TANZU_HOST: https://prod-<number>.nsxservicemesh.vmware.com
+TANZU_APIKEY: <its-a-secret>
 ```
 
 # command to rebuild, install and test
