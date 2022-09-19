@@ -27,6 +27,10 @@ func resourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"kubernetes_context": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -84,6 +88,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	c := m.(*tc.Client)
 	displayName := d.Get("display_name").(string)
+	kubernetesContext := d.Get("kubernetes_context").(string)
 	fmt.Printf("Mapping Cluster From Schema...\n")
 	clusterToCreate, mapClusterToCreateError := mapClusterFromSchema(d)
 
@@ -103,7 +108,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	fmt.Printf("onboardUrlResponse.Url:%s\n", onboardUrlResponse.Url)
 	fmt.Printf("-----------------[kubectl-b]----------------------------\n")
 
-	onboardCmd := exec.Command("kubectl", "--context", "docker-desktop", "apply", "-f", onboardUrlResponse.Url)
+	onboardCmd := exec.Command("kubectl", "--context", kubernetesContext, "apply", "-f", onboardUrlResponse.Url)
 	execOnboardCmdStdout, execOnboardCmdErr := onboardCmd.Output()
 	fmt.Printf("\n-----------------[kubectl-c]----------------------------\n")
 	fmt.Print(string(execOnboardCmdStdout))
@@ -124,7 +129,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	fmt.Printf("\n-----------------[kubectl-2]----------------------------\n")
 	// kubectl -n vmware-system-tsm create secret generic cluster-token --from-literal=token={token}
 
-	checkSecretExistsCmd := exec.Command("kubectl", "--context", "docker-desktop", "-n", "vmware-system-tsm", "get", "secret", "cluster-token")
+	checkSecretExistsCmd := exec.Command("kubectl", "--context", kubernetesContext, "-n", "vmware-system-tsm", "get", "secret", "cluster-token")
 	checkSecretExistsCmdStdout, checkSecretExistsCmdErr := checkSecretExistsCmd.Output()
 	fmt.Printf("\n-----------------[kubectl-2b]----------------------------\n")
 	fmt.Print(string(checkSecretExistsCmdStdout))

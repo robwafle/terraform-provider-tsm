@@ -1,23 +1,6 @@
-terraform {
-  required_providers {
-    tanzu = {
-      source  = "terraform.vmware.com/csc/tanzu"
-      version = "0.0.1"
-    }
-  }
-}
-
-
-
-# NOTE: Values are read from the environment variables: TANZU_HOST, TANZU_APIKEY
-
-provider "tanzu" {
-  //host = "https://prod-4.nsxservicemesh.vmware.com"
-  //apikey = ""
-}
-
 resource "tanzu_cluster" "cluster" {
   display_name = "rob-local"
+  kubernetes_context = "docker-desktop"
   description = "created via terraform"
   auto_install_servicemesh = true
   enable_namespace_exclusions = true
@@ -45,14 +28,7 @@ resource "tanzu_cluster" "cluster" {
      type = "EXACT"
    }
 }
-  
-  
-  # namespace_exclusion {
-  #   for_each = {for ne in var.namespace_exclusions: ne => ne}
 
-  #   match = "${ne.match}"
-  #   type = "${ne.type}"
-  # }
 
 
 
