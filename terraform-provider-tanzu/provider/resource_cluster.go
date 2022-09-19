@@ -271,21 +271,18 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 }
 
 func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	if d.HasChange("labels") {
-		c := m.(*tc.Client)
+	c := m.(*tc.Client)
 
-		clusterToUpdate, clusterToUpdateError := mapClusterFromSchema(d)
-		if clusterToUpdateError != nil {
-			return diag.FromErr(clusterToUpdateError)
-		}
+	clusterToUpdate, clusterToUpdateError := mapClusterFromSchema(d)
+	if clusterToUpdateError != nil {
+		return diag.FromErr(clusterToUpdateError)
+	}
 
-		d.Set("last_updated", time.Now().Format(time.RFC850))
+	d.Set("last_updated", time.Now().Format(time.RFC850))
 
-		_, err := c.UpdateCluster(*clusterToUpdate, nil)
-		if err != nil {
-			return diag.FromErr(err)
-		}
-
+	_, err := c.UpdateCluster(*clusterToUpdate, nil)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
 	return resourceClusterRead(ctx, d, m)

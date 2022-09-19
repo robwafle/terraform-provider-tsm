@@ -1,11 +1,13 @@
 terraform {
-  required_version = ">= 0.0.1"
   required_providers {
     tanzu = {
-      source  = "vmware.com/csc/tanzu"
+      source  = "terraform.vmware.com/csc/tanzu"
+      version = "0.0.1"
     }
   }
 }
+
+
 
 # NOTE: Values are read from the environment variables: TANZU_HOST, TANZU_APIKEY
 
@@ -33,10 +35,15 @@ resource "tanzu_cluster" "cluster" {
     type = "EXACT"
   }
 
-  namespace_exclusion {
-    match = "bob"
-    type = "EXACT"
-  }
+  #  namespace_exclusion {
+  #    match = "bob"
+  #    type = "EXACT"
+  #  }
+
+   namespace_exclusion {
+     match = "three"
+     type = "EXACT"
+   }
 }
   
   
