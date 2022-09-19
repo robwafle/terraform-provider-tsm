@@ -21,6 +21,7 @@ RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin
 
 COPY docker-in-docker-debian.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-in-docker-debian.sh
 RUN /usr/local/bin/docker-in-docker-debian.sh "true" "${USERNAME}" "false" "latest"
 
 # [Optional] Uncomment the next lines to use go get to install anything else you need
