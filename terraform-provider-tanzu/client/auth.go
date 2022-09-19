@@ -25,7 +25,7 @@ func (c *Client) SignIn() (*AuthResponse, error) {
 	// }
 
 	data := url.Values{}
-	data.Set("refresh_token", "vsoq2sBIO1QFA-d9pDgQK7RuVk-Rxie05UZsiN0uVGwR2VCCGvzLj5XP6d0UH8nm")
+	data.Set("refresh_token", c.Auth.apikey)
 
 	req, err := http.NewRequest("POST", c.AuthURL, strings.NewReader(data.Encode()))
 	if err == nil {
