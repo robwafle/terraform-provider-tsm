@@ -137,7 +137,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	// NOTE: If the secret has already been created, trying to create it again will fail.
 	if checkSecretExistsCmdErr != nil && cl.Token != "" {
 		fmt.Printf("\nCreating Secret!!!\n")
-		connectCmd := exec.Command("kubectl", "--context", "docker-desktop", "-n", "vmware-system-tsm", "create", "secret", "generic", "cluster-token", fmt.Sprintf("--from-literal=token=%s", cl.Token))
+		connectCmd := exec.Command("kubectl", "--context", kubernetesContext, "-n", "vmware-system-tsm", "create", "secret", "generic", "cluster-token", fmt.Sprintf("--from-literal=token=%s", cl.Token))
 		connectCmdStdout, execConnectCmdErr := connectCmd.Output()
 		fmt.Printf("\n-----------------[kubectl-3]----------------------------\n")
 		fmt.Print(string(connectCmdStdout))
@@ -301,6 +301,7 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, m interf
 	var diags diag.Diagnostics
 
 	clusterID := d.Get("id").(string)
+	kubernetesContext := d.Get("kubernetes_context").(string)
 	fmt.Printf("---------------------------------------------\n")
 	fmt.Printf("clusterID to delete: %s\n", clusterID)
 	fmt.Printf("---------------------------------------------\n")
@@ -316,7 +317,7 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, m interf
 	fmt.Printf("---------------------------------------------\n")
 	fmt.Printf("deleteUrlYaml: %s\n", deleteUrlYaml)
 	fmt.Printf("---------------------------------------------\n")
-	deleteCmd := exec.Command("kubectl", "--context", "docker-desktop", "delete", "--ignore-not-found=true", "-f", deleteUrlYaml)
+	deleteCmd := exec.Command("kubectl", "--context", kubernetesContext, "delete", "--ignore-not-found=true", "-f", deleteUrlYaml)
 
 	execDeleteCmdStdout, execDeleteCmdErr := deleteCmd.Output()
 	fmt.Printf("\n-----------------[kubectl-c]----------------------------\n")

@@ -1,6 +1,6 @@
 resource "tanzu_cluster" "cluster" {
-  display_name = "rob-local"
-  kubernetes_context = "docker-desktop"
+  display_name = "minikube-one"
+  kubernetes_context = "minikube-one"
   description = "created via terraform"
   auto_install_servicemesh = true
   enable_namespace_exclusions = true

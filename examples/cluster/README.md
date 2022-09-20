@@ -9,17 +9,28 @@ TANZU_APIKEY: <its-a-secret>
 pushd ../../terraform-provider-tanzu ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
 ```
 
-
+# plan
 ```
-rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan -out=tfplan; terraform show tfplan | tee tfplan.txt;  terraform apply -input=false tfplan
+rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan -out=tfplan; terraform show tfplan | tee tfplan.txt; 
 ```
 
+# apply
 ```
 terraform apply -input=false tfplan
 ```
 
-
+# destroy
 ```
-kubectl --context docker-desktop apply -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/operator-deployment.yaml
+terraform apply -input=false -destroy
+```
+
+# manual deploy
+```
+kubectl apply -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/operator-deployment.yaml
+```
+
+# manual delete
+```
+kubectl delete --ignore-not-found=true -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/client-cluster-uninstall.yaml
 ```
 
