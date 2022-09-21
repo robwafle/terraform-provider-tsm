@@ -34,3 +34,13 @@ kubectl apply -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k
 kubectl delete --ignore-not-found=true -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/client-cluster-uninstall.yaml
 ```
 
+# kubectl run tmp-shell --rm -i --tty --image nicolaka/netshoot
+```
+kubectl run netshoot --rm -i --tty --image nicolaka/netshoot
+```
+
+
+# if you want to spin up a container on the host's network namespace.
+```
+ kubectl run netshoot --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}' --image nicolaka/netshoot
+```

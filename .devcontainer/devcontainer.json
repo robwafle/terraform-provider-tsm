@@ -1,13 +1,16 @@
 {
-    "name": "my-project-devcontainer",
+    "name": "terraform-provider-tanzu",
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu", // Any generic, debian-based image.
     "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1": {
+            "version": "latest"
+        },
         "ghcr.io/devcontainers/features/go:1": {
             "version": "1.19"
         },
-        "ghcr.io/devcontainers/features/docker-in-docker:1": {
-            "version": "latest"
-        },
+        // "ghcr.io/devcontainers/features/docker-from-docker:1": {
+        //     "version": "latest"
+        // },
         "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
             "version": "latest"
         },
@@ -19,6 +22,9 @@
     "remoteEnv": {
 		"TANZU_HOST": "${localEnv:TANZU_HOST}",
 		"TANZU_APIKEY": "${localEnv:TANZU_APIKEY}",
+        "TF_VAR_appId": "${localEnv:TF_VAR_APPID}",
+        "TF_VAR_password": "${localEnv:TF_VAR_PASSWORD}",
+        "TF_VAR_tenantId": "${localEnv:TF_VAR_TENANTID}",
         "HOST_VAR":"/host/var"
 	}
 }

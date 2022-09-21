@@ -31,6 +31,14 @@ func resourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"cluster_name": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"resource_group": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -87,6 +95,8 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	var diags diag.Diagnostics
 
 	c := m.(*tc.Client)
+	kubectlConfigure(ctx, d)
+
 	displayName := d.Get("display_name").(string)
 	kubernetesContext := d.Get("kubernetes_context").(string)
 	fmt.Printf("Mapping Cluster From Schema...\n")
@@ -104,6 +114,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(err)
 	}
 	_ = onboardUrlResponse
+
 	fmt.Printf("-----------------[kubectl-a]----------------------------\n")
 	fmt.Printf("onboardUrlResponse.Url:%s\n", onboardUrlResponse.Url)
 	fmt.Printf("-----------------[kubectl-b]----------------------------\n")
@@ -277,6 +288,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
+	kubectlConfigure(ctx, d)
 
 	clusterToUpdate, clusterToUpdateError := mapClusterFromSchema(d)
 	if clusterToUpdateError != nil {
@@ -296,6 +308,7 @@ func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, m interf
 func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	// Warning or errors can be collected in a slice type
 	c := m.(*tc.Client)
+	kubectlConfigure(ctx, d)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
