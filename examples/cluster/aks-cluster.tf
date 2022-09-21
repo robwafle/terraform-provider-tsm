@@ -43,3 +43,11 @@ data "azurerm_kubernetes_cluster" "k8s" {
   name                = azurerm_kubernetes_cluster.k8s.name
   resource_group_name = azurerm_resource_group.default.name
 }
+
+# configure kubectl, this will vary based on cloud provider and security policies
+resource "null_resource" "kubectl" {
+  depends_on = [azurerm_kubernetes_cluster.k8s]
+  provisioner "local-exec" {
+    command = "az aks get-credentials --name ${azurerm_kubernetes_cluster.k8s.name} --resource-group ${azurerm_resource_group.default.name} --overwrite-existing"
+  }
+}

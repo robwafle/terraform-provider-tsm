@@ -21,14 +21,6 @@ func dataSourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"cluster_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"resource_group": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
 			"state": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
