@@ -13,7 +13,7 @@ import (
 // GetGlobalNamespaces - Returns list of GlobalNamespaces
 func (c *Client) GetGlobalNamespaces(ctx context.Context) (*GlobalNamespaces, error) {
 	tflog.Debug(ctx, "Getting Global Namespaces ...")
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces", c.HostURL), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces", c.HostURL), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -34,10 +34,9 @@ func (c *Client) GetGlobalNamespaces(ctx context.Context) (*GlobalNamespaces, er
 
 // GetGlobalNamespace - Returns specific GlobalNamespace (no auth required)
 func (c *Client) GetGlobalNamespace(ctx context.Context, id string) (*GlobalNamespace, error) {
-	//logger.Info(c.ctx, "---------------------------------------------")
 
 	tflog.Debug(ctx, fmt.Sprintf("Getting Global Namespace: %s", id))
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces/%s", c.HostURL, id), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces/%s", c.HostURL, id), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -68,11 +67,7 @@ func (c *Client) CreateUpdateGlobalNamespace(ctx context.Context, globalNamespac
 		return nil, err
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
-	tflog.Debug(ctx, fmt.Sprintf("putUrl: %s", putUrl))
-	tflog.Debug(ctx, fmt.Sprintf("%s", GlobalNamespaceJSON))
-	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
-	req, err := http.NewRequest("PUT", putUrl, bytes.NewBuffer(GlobalNamespaceJSON))
+	req, err := http.NewRequestWithContext(ctx, "PUT", putUrl, bytes.NewBuffer(GlobalNamespaceJSON))
 	if err != nil {
 		return nil, err
 	}
@@ -94,25 +89,23 @@ func (c *Client) CreateUpdateGlobalNamespace(ctx context.Context, globalNamespac
 func (c *Client) DeleteGlobalNamespace(ctx context.Context, id string, authToken *string) (*GlobalNamespace, error) {
 	deleteUrl := fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces/%s", c.HostURL, id)
 
-	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
-	tflog.Debug(ctx, fmt.Sprintf("deleteUrl: %s", deleteUrl))
-	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
-
-	req, err := http.NewRequest("DELETE", deleteUrl, nil)
+	req, err := http.NewRequestWithContext(ctx, "DELETE", deleteUrl, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	body, err := c.doRequest(req, authToken)
+	_, err = c.doRequest(req, authToken)
 	if err != nil {
 		return nil, err
 	}
 
-	newGlobalNamespace := GlobalNamespace{}
-	err = json.Unmarshal(body, &newGlobalNamespace)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: expected return 204, should probably check for that
 
-	return &newGlobalNamespace, nil
+	// newGlobalNamespace := GlobalNamespace{}
+	// err = json.Unmarshal(body, &newGlobalNamespace)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	return nil, nil
 }

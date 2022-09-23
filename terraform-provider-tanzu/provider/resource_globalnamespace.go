@@ -175,7 +175,7 @@ func resourceGlobalNamespaceCreate(ctx context.Context, d *schema.ResourceData, 
 }
 
 func mapGlobalNamespaceFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.GlobalNamespace, error) {
-	id := d.Get("id").(string)
+	//id := d.Get("id").(string)
 	Name := d.Get("name").(string)
 	DisplayName := d.Get("display_name").(string)
 	DomainName := d.Get("domain_name").(string)
@@ -187,8 +187,6 @@ func mapGlobalNamespaceFromSchema(ctx context.Context, d *schema.ResourceData) (
 	Color := d.Get("color").(string)
 	Version := d.Get("version").(string)
 	ApiDiscoveryEnabled := d.Get("api_discovery_enabled").(bool)
-
-	tflog.Debug(ctx, "-----------------[match_conditions]----------------------------")
 
 	_match_conditions := d.Get("match_condition").(*schema.Set).List()
 	MatchConditions := []tc.MatchCondition{}
@@ -216,7 +214,7 @@ func mapGlobalNamespaceFromSchema(ctx context.Context, d *schema.ResourceData) (
 	}
 
 	globalNamespace := tc.GlobalNamespace{
-		ID:                  id,
+		//ID:                  id,
 		Name:                Name,
 		DisplayName:         DisplayName,
 		DomainName:          DomainName,
@@ -242,30 +240,31 @@ func resourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m 
 
 	id := d.Id()
 
-	GlobalNamespace, err := c.GetGlobalNamespace(ctx, id)
+	globalNamespace, err := c.GetGlobalNamespace(ctx, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	tflog.Debug(ctx, "Setting Root Level Fields ... ")
-	d.Set("id", GlobalNamespace.ID)
-	tflog.Debug(ctx, fmt.Sprintf("Setting Name: %s", GlobalNamespace.Name))
-	d.Set("name", GlobalNamespace.Name)
+	// DO NOT SET THE ID
+	//d.Set("id", globalNamespace.ID)
+	tflog.Debug(ctx, fmt.Sprintf("Setting Name: %s", globalNamespace.Name))
+	d.Set("name", globalNamespace.Name)
 
-	tflog.Debug(ctx, fmt.Sprintf("Setting DisplayName: %s", GlobalNamespace.DisplayName))
-	d.Set("display_name", GlobalNamespace.DisplayName)
+	tflog.Debug(ctx, fmt.Sprintf("Setting DisplayName: %s", globalNamespace.DisplayName))
+	d.Set("display_name", globalNamespace.DisplayName)
 
-	tflog.Debug(ctx, fmt.Sprintf("Setting DomainName: %s", GlobalNamespace.DomainName))
-	d.Set("domain_name", GlobalNamespace.DomainName)
+	tflog.Debug(ctx, fmt.Sprintf("Setting DomainName: %s", globalNamespace.DomainName))
+	d.Set("domain_name", globalNamespace.DomainName)
 
-	d.Set("use_shared_gateway", GlobalNamespace.UseSharedGateway)
-	d.Set("mtls_enforced", GlobalNamespace.MtlsEnforced)
-	d.Set("ca_type", GlobalNamespace.CaType)
-	d.Set("ca", GlobalNamespace.Ca)
-	d.Set("description", GlobalNamespace.Description)
-	d.Set("color", GlobalNamespace.Color)
-	d.Set("version", GlobalNamespace.Version)
-	d.Set("api_discovery_enabled", GlobalNamespace.ApiDiscoveryEnabled)
+	d.Set("use_shared_gateway", globalNamespace.UseSharedGateway)
+	d.Set("mtls_enforced", globalNamespace.MtlsEnforced)
+	d.Set("ca_type", globalNamespace.CaType)
+	d.Set("ca", globalNamespace.Ca)
+	d.Set("description", globalNamespace.Description)
+	d.Set("color", globalNamespace.Color)
+	d.Set("version", globalNamespace.Version)
+	d.Set("api_discovery_enabled", globalNamespace.ApiDiscoveryEnabled)
 
 	// tflog.Debug(ctx, "Setting MatchConditions ... ")
 	// Set NamespaceExclusions
@@ -282,7 +281,7 @@ func resourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m 
 	// 	return diag.FromErr(err)
 	// }
 	tflog.Debug(ctx, "Setting Id ... ")
-	d.SetId(GlobalNamespace.ID)
+	//d.SetId(globalNamespace.ID)
 	tflog.Debug(ctx, "Done with resourceGlobalNamespaceRead ...")
 	return diags
 }

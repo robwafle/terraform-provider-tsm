@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	logging "github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 )
 
 // HostURL - Default Hashicups URL
@@ -37,12 +38,12 @@ type AuthResponse struct {
 
 // NewClient -
 func NewClient(ctx context.Context, host *string, apikey *string) (*Client, error) {
-	//transport := logger.NewLoggingHTTPTransport(http.DefaultTransport)
+	transport := logging.NewLoggingHTTPTransport(http.DefaultTransport)
 
 	c := Client{
 		HTTPClient: &http.Client{
-			Timeout: 10 * time.Second,
-			//Transport: transport,
+			Timeout:   10 * time.Second,
+			Transport: transport,
 		},
 		// Default Hashicups URL
 		HostURL: HostURL,
@@ -78,8 +79,7 @@ func NewClient(ctx context.Context, host *string, apikey *string) (*Client, erro
 
 func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error) {
 	token := c.Token
-	//logger.Info(c.ctx, "---------------------------------------------")
-	//logger.Info(c.ctx, fmt.Sprintf("Url: %s", req.URL))
+	tflog.Debug(c.ctx, fmt.Sprintf("Making %s Request to Url: %s", req.Method, req.URL))
 
 	if authToken != nil {
 		token = *authToken
@@ -96,13 +96,6 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	tflog.Debug(c.ctx, fmt.Sprintf("-------------------------------------"))
-	tflog.Debug(c.ctx, fmt.Sprintf("request.URL: %s", req.URL))
-	tflog.Debug(c.ctx, fmt.Sprintf("request.METHOD: %s", req.Method))
-	tflog.Debug(c.ctx, fmt.Sprintf("-------------------------------------"))
-	//tflog.Debug(c.ctx,fmt.Printf("%s", body))
-	tflog.Debug(c.ctx, fmt.Sprintf("-------------------------------------"))
-
 	if err != nil {
 		return nil, err
 	}
@@ -112,8 +105,9 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 	httpSubmitted := res.StatusCode == http.StatusAccepted
 	httpDeleted := res.StatusCode == http.StatusNoContent
 	httpCreated := res.StatusCode == http.StatusCreated
+	httpNotFound := res.StatusCode == http.StatusNotFound
 
-	if !(httpSubmitted || httpOK || httpCreated || httpDeleted) {
+	if !(httpSubmitted || httpOK || httpCreated || httpDeleted || httpNotFound) {
 		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 	}
 

@@ -27,7 +27,7 @@ func (c *Client) SignIn(ctx context.Context) (*AuthResponse, error) {
 	data := url.Values{}
 	data.Set("refresh_token", c.Auth.apikey)
 
-	req, err := http.NewRequest("POST", c.AuthURL, strings.NewReader(data.Encode()))
+	req, err := http.NewRequestWithContext(ctx, "POST", c.AuthURL, strings.NewReader(data.Encode()))
 	if err == nil {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		httputil.DumpRequestOut(req, true)

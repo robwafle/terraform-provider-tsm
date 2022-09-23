@@ -1,0 +1,8 @@
+provider_installation {
+  dev_overrides {
+    "terraform.vmware.com/csc/tanzu" = "/workspaces/terraform-provider-tanzu/terraform-provider-tanzu"
+  }
+  direct {
+    exclude = ["terraform.vmware.com/*/*"]
+  }
+}

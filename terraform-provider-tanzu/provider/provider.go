@@ -60,14 +60,11 @@ func Provider() *schema.Provider {
 // 	}
 
 // 	if cluster_name != "" && resource_group != "" {
-// 		tflog.Debug(ctx, fmt.Sprintf("\n-----------------[kubectl-config]----------------------------\n")
-// 		tflog.Debug(ctx, fmt.Sprintf("Configuring .kube/config using az aks get-credentials. Using resource_group: %s, cluster_name: %s ...", resource_group, cluster_name)
 // 		kubeConfig := exec.Command("az", "aks", "get-credentials", "--resource-group", resource_group, "--name", cluster_name)
 // 		execkubeConfigStdout, execkubeConfigErr := kubeConfig.Output()
 
 // 		fmt.Print(string(execkubeConfigStdout))
 
-// 		tflog.Debug(ctx, fmt.Sprintf("\n-----------------[kubectl-config]----------------------------\n")
 // 		if execkubeConfigErr != nil {
 // 			fmt.Print(execkubeConfigErr.Error())
 // 			diags = append(diags, diag.Diagnostic{
