@@ -90,7 +90,7 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 
 	id := d.Id()
 
-	cl, err := c.GetCluster(id)
+	cl, err := c.GetCluster(ctx, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -160,7 +160,7 @@ func dataSourceClustersRead(ctx context.Context, d *schema.ResourceData, m inter
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	clusters, err := c.GetClusters()
+	clusters, err := c.GetClusters(ctx)
 	if err != nil {
 		return diag.FromErr(err)
 	}

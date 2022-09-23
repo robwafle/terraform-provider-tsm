@@ -108,7 +108,11 @@ func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("\nSetting Root Level Fields ... \n"))
+	tflog.Debug(ctx, fmt.Sprintf("Setting Root Level Fields ... "))
+	if err := d.Set("id", GlobalNamespace.ID); err != nil {
+		return diag.FromErr(err)
+	}
+
 	if err := d.Set("name", GlobalNamespace.Name); err != nil {
 		return diag.FromErr(err)
 	}
@@ -145,7 +149,7 @@ func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("\nSetting MatchConditions ... \n"))
+	tflog.Debug(ctx, fmt.Sprintf("Setting MatchConditions ... "))
 	// Set NamespaceExclusions
 	// namespace_exclusions := make([]map[string]any, 0)
 
@@ -161,7 +165,7 @@ func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, 
 	// }
 	d.SetId(id)
 
-	tflog.Debug(ctx, fmt.Sprintf("\nDone with resourceGlobalNamespaceRead ... \n"))
+	tflog.Debug(ctx, fmt.Sprintf("Done with resourceGlobalNamespaceRead ... "))
 	return diags
 }
 

@@ -2,13 +2,16 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // GetClusters - Returns list of Clusters
-func (c *Client) GetClusters() (*Clusters, error) {
+func (c *Client) GetClusters(ctx context.Context) (*Clusters, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/tsm/v1alpha1/clusters", c.HostURL), nil)
 	if err != nil {
 		return nil, err
@@ -29,7 +32,7 @@ func (c *Client) GetClusters() (*Clusters, error) {
 }
 
 // GetCluster - Returns specific Cluster (no auth required)
-func (c *Client) GetCluster(id string) (*Cluster, error) {
+func (c *Client) GetCluster(ctx context.Context, id string) (*Cluster, error) {
 	//logger.Info(c.ctx, "---------------------------------------------")
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/tsm/v1alpha1/clusters/%s", c.HostURL, id), nil)
@@ -52,7 +55,7 @@ func (c *Client) GetCluster(id string) (*Cluster, error) {
 }
 
 // GetOnboardUrl
-func (c *Client) GetOnboardUrl(authToken *string) (*OnboardUrlResponse, error) {
+func (c *Client) GetOnboardUrl(ctx context.Context, authToken *string) (*OnboardUrlResponse, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/tsm/v1alpha1/clusters/onboard-url", c.HostURL), nil)
 	if err != nil {
 		return nil, err
@@ -73,7 +76,7 @@ func (c *Client) GetOnboardUrl(authToken *string) (*OnboardUrlResponse, error) {
 }
 
 // CreateCluster - Create new Cluster
-func (c *Client) CreateCluster(cluster Cluster, authToken *string) (*Cluster, error) {
+func (c *Client) CreateCluster(ctx context.Context, cluster Cluster, authToken *string) (*Cluster, error) {
 	putUrl := fmt.Sprintf("%s/tsm/v1alpha1/clusters/%s?createOnly=true", c.HostURL, cluster.DisplayName)
 
 	// set this to nil, because we're not supposed to send it to the PUT
@@ -82,10 +85,10 @@ func (c *Client) CreateCluster(cluster Cluster, authToken *string) (*Cluster, er
 		return nil, err
 	}
 
-	fmt.Printf("---------------------------------------------\n")
-	fmt.Printf("putUrl: %s\n", putUrl)
-	fmt.Printf("%s\n", clusterJSON)
-	fmt.Printf("---------------------------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("putUrl: %s", putUrl))
+	tflog.Debug(ctx, fmt.Sprintf("%s", clusterJSON))
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
 	req, err := http.NewRequest("PUT", putUrl, bytes.NewBuffer(clusterJSON))
 
 	if err != nil {
@@ -106,7 +109,7 @@ func (c *Client) CreateCluster(cluster Cluster, authToken *string) (*Cluster, er
 	return &newCluster, nil
 }
 
-func (c *Client) UpdateCluster(cluster Cluster, authToken *string) (*Cluster, error) {
+func (c *Client) UpdateCluster(ctx context.Context, cluster Cluster, authToken *string) (*Cluster, error) {
 	putUrl := fmt.Sprintf("%s/tsm/v1alpha1/clusters/%s?createOnly=false", c.HostURL, cluster.DisplayName)
 
 	// set this to nil, because we're not supposed to send it to the PUT
@@ -115,10 +118,10 @@ func (c *Client) UpdateCluster(cluster Cluster, authToken *string) (*Cluster, er
 		return nil, err
 	}
 
-	fmt.Printf("---------------------------------------------\n")
-	fmt.Printf("putUrl: %s\n", putUrl)
-	fmt.Printf("%s\n", clusterJSON)
-	fmt.Printf("---------------------------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("putUrl: %s", putUrl))
+	tflog.Debug(ctx, fmt.Sprintf("%s", clusterJSON))
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
 	req, err := http.NewRequest("PUT", putUrl, bytes.NewBuffer(clusterJSON))
 	if err != nil {
 		return nil, err
@@ -138,12 +141,12 @@ func (c *Client) UpdateCluster(cluster Cluster, authToken *string) (*Cluster, er
 	return &newCluster, nil
 }
 
-func (c *Client) DeleteCluster(id string, authToken *string) (*Cluster, error) {
+func (c *Client) DeleteCluster(ctx context.Context, id string, authToken *string) (*Cluster, error) {
 	deleteUrl := fmt.Sprintf("%s/tsm/v1alpha1/clusters/%s", c.HostURL, id)
 
-	fmt.Printf("---------------------------------------------\n")
-	fmt.Printf("deleteUrl: %s\n", deleteUrl)
-	fmt.Printf("---------------------------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("deleteUrl: %s", deleteUrl))
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
 
 	req, err := http.NewRequest("DELETE", deleteUrl, nil)
 	if err != nil {

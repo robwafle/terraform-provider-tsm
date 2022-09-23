@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -99,73 +100,73 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	displayName := d.Get("display_name").(string)
 	kubernetesContext := d.Get("kubernetes_context").(string)
-	fmt.Printf("Mapping Cluster From Schema...\n")
-	clusterToCreate, mapClusterToCreateError := mapClusterFromSchema(d)
+	tflog.Debug(ctx, fmt.Sprintf("Mapping Cluster From Schema..."))
+	clusterToCreate, mapClusterToCreateError := mapClusterFromSchema(ctx, d)
 
-	fmt.Printf("Checking Errors...\n")
+	tflog.Debug(ctx, fmt.Sprintf("Checking Errors..."))
 	if mapClusterToCreateError != nil {
 		fmt.Println(mapClusterToCreateError.Error())
 		return diag.FromErr(mapClusterToCreateError)
 	}
-	fmt.Printf("Done mapping Cluster From Schema...\n")
+	tflog.Debug(ctx, fmt.Sprintf("Done mapping Cluster From Schema..."))
 
-	onboardUrlResponse, err := c.GetOnboardUrl(nil)
+	onboardUrlResponse, err := c.GetOnboardUrl(ctx, nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	_ = onboardUrlResponse
 
-	fmt.Printf("-----------------[kubectl-a]----------------------------\n")
-	fmt.Printf("onboardUrlResponse.Url:%s\n", onboardUrlResponse.Url)
-	fmt.Printf("-----------------[kubectl-b]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-a]----------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("onboardUrlResponse.Url:%s", onboardUrlResponse.Url))
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-b]----------------------------"))
 
 	onboardCmd := exec.Command("kubectl", "--context", kubernetesContext, "apply", "-f", onboardUrlResponse.Url)
 	execOnboardCmdStdout, execOnboardCmdErr := onboardCmd.Output()
-	fmt.Printf("\n-----------------[kubectl-c]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-c]----------------------------"))
 	fmt.Print(string(execOnboardCmdStdout))
 
-	fmt.Printf("\n-----------------[kubectl-d]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-d]----------------------------"))
 	if execOnboardCmdErr != nil {
 		fmt.Print(execOnboardCmdErr.Error())
 		return diag.FromErr(execOnboardCmdErr)
 	}
 
-	cl, err := c.CreateCluster(*clusterToCreate, nil)
+	cl, err := c.CreateCluster(ctx, *clusterToCreate, nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	fmt.Printf("\n-----------------[kubectl-1]----------------------------\n")
-	fmt.Printf("cl.Token:%s\n", cl.Token)
-	fmt.Printf("\n-----------------[kubectl-2]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-1]----------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("cl.Token:%s", cl.Token))
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-2]----------------------------"))
 	// kubectl -n vmware-system-tsm create secret generic cluster-token --from-literal=token={token}
 
 	checkSecretExistsCmd := exec.Command("kubectl", "--context", kubernetesContext, "-n", "vmware-system-tsm", "get", "secret", "cluster-token")
 	checkSecretExistsCmdStdout, checkSecretExistsCmdErr := checkSecretExistsCmd.Output()
-	fmt.Printf("\n-----------------[kubectl-2b]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-2b]----------------------------"))
 	fmt.Print(string(checkSecretExistsCmdStdout))
 	// NOTE: If the cluster has already been registered, token will be null and this command will fail.
 	// NOTE: If the secret has already been created, trying to create it again will fail.
 	if checkSecretExistsCmdErr != nil && cl.Token != "" {
-		fmt.Printf("\nCreating Secret!!!\n")
+		tflog.Debug(ctx, fmt.Sprintf("Creating Secret!!!"))
 		connectCmd := exec.Command("kubectl", "--context", kubernetesContext, "-n", "vmware-system-tsm", "create", "secret", "generic", "cluster-token", fmt.Sprintf("--from-literal=token=%s", cl.Token))
 		connectCmdStdout, execConnectCmdErr := connectCmd.Output()
-		fmt.Printf("\n-----------------[kubectl-3]----------------------------\n")
+		tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-3]----------------------------"))
 		fmt.Print(string(connectCmdStdout))
-		fmt.Printf("\n-----------------[kubectl-4]----------------------------\n")
+		tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-4]----------------------------"))
 		if execConnectCmdErr != nil {
 			fmt.Print(execConnectCmdErr.Error())
 			return diag.FromErr(err)
 		}
 	} else {
-		fmt.Printf("\nSkipping Secret Creation!!!\n")
+		tflog.Debug(ctx, fmt.Sprintf("Skipping Secret Creation!!!"))
 	}
 
 	// if err := d.Set("display_name", cl.DisplayName); err != nil {
 	// 	return diag.FromErr(err)
 	// }
 
-	fmt.Printf("\n Setting ID...\n")
+	tflog.Debug(ctx, fmt.Sprintf(" Setting ID..."))
 	d.SetId(displayName)
 
 	resourceClusterRead(ctx, d, m)
@@ -174,13 +175,13 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 }
 
-func mapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
+func mapClusterFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.Cluster, error) {
 	displayName := d.Get("display_name").(string)
 	description := d.Get("description").(string)
 	enableNamespaceExclusions := d.Get("enable_namespace_exclusions").(bool)
 	autoInstallServiceMesh := d.Get("auto_install_servicemesh").(bool)
 
-	fmt.Printf("-----------------[TAGS]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[TAGS]----------------------------"))
 
 	_tags := d.Get("tags").(*schema.Set).List()
 	tags := []string{}
@@ -190,13 +191,13 @@ func mapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 		tags = append(tags, t)
 	}
 
-	fmt.Printf("-----------------[LABELS]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[LABELS]----------------------------"))
 
 	_labels := d.Get("labels").(map[string]any)
 	labels := []tc.Label{}
-	fmt.Printf("-----------------[LABELS]----------------------------\n")
-	fmt.Printf("_labels: %d\n", len(_labels))
-	fmt.Printf("-----------------[LABELS]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[LABELS]----------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("_labels: %d", len(_labels)))
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[LABELS]----------------------------"))
 	for key, value := range _labels {
 		label := tc.Label{
 			Key:   key,
@@ -205,13 +206,13 @@ func mapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 		labels = append(labels, label)
 	}
 
-	fmt.Printf("-----------------[namespace_exclusions111]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[namespace_exclusions111]----------------------------"))
 
 	_namespace_exclusions := d.Get("namespace_exclusion").(*schema.Set).List()
 	namespace_exclusions := []tc.NamespaceExclusion{}
-	fmt.Printf("-----------------[namespace_exclusions]----------------------------\n")
-	fmt.Printf("_namespace_exclusions: %d\n", len(_namespace_exclusions))
-	fmt.Printf("-----------------[namespace_exclusions]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[namespace_exclusions]----------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("_namespace_exclusions: %d", len(_namespace_exclusions)))
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[namespace_exclusions]----------------------------"))
 	for _, namespace_exclusion := range _namespace_exclusions {
 		ne, lbok := namespace_exclusion.(map[string]any)
 		if lbok {
@@ -244,12 +245,12 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	clusterID := d.Get("id").(string)
 
-	cl, err := c.GetCluster(clusterID)
+	cl, err := c.GetCluster(ctx, clusterID)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	fmt.Printf("\nSetting Root Level Fields ... \n")
+	tflog.Debug(ctx, fmt.Sprintf("Setting Root Level Fields ... "))
 	d.Set("id", cl.ID)
 	d.Set("display_name", cl.DisplayName)
 	d.Set("token", cl.Token)
@@ -258,7 +259,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 	d.Set("enable_namespace_exclusions", cl.EnableNamespaceExclusions)
 
 	// Set labels
-	fmt.Printf("\nSetting Labels ... \n")
+	tflog.Debug(ctx, fmt.Sprintf("Setting Labels ... "))
 	labels := make(map[string]any)
 
 	for _, l := range cl.Labels {
@@ -268,7 +269,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.FromErr(err)
 	}
 
-	fmt.Printf("\nSetting NamespaceExclusions ... \n")
+	tflog.Debug(ctx, fmt.Sprintf("Setting NamespaceExclusions ... "))
 	// Set NamespaceExclusions
 	// namespace_exclusions := make([]map[string]any, 0)
 
@@ -282,9 +283,9 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 	// if err := d.Set("namespace_exclusions", namespace_exclusions); err != nil {
 	// 	return diag.FromErr(err)
 	// }
-	fmt.Printf("\nSetting Id ... \n")
+	tflog.Debug(ctx, fmt.Sprintf("Setting Id ... "))
 	d.SetId(cl.ID)
-	fmt.Printf("\nDone with resourceClusterRead ... \n")
+	tflog.Debug(ctx, fmt.Sprintf("Done with resourceClusterRead ... "))
 	return diags
 }
 
@@ -292,14 +293,14 @@ func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(*tc.Client)
 	//kubectlConfigure(ctx, d)
 
-	clusterToUpdate, clusterToUpdateError := mapClusterFromSchema(d)
+	clusterToUpdate, clusterToUpdateError := mapClusterFromSchema(ctx, d)
 	if clusterToUpdateError != nil {
 		return diag.FromErr(clusterToUpdateError)
 	}
 
 	d.Set("last_updated", time.Now().Format(time.RFC850))
 
-	_, err := c.UpdateCluster(*clusterToUpdate, nil)
+	_, err := c.UpdateCluster(ctx, *clusterToUpdate, nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -317,11 +318,11 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, m interf
 
 	clusterID := d.Get("id").(string)
 	kubernetesContext := d.Get("kubernetes_context").(string)
-	fmt.Printf("---------------------------------------------\n")
-	fmt.Printf("clusterID to delete: %s\n", clusterID)
-	fmt.Printf("---------------------------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("clusterID to delete: %s", clusterID))
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
 
-	_, err := c.DeleteCluster(clusterID, nil)
+	_, err := c.DeleteCluster(ctx, clusterID, nil)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -329,13 +330,13 @@ func resourceClusterDelete(ctx context.Context, d *schema.ResourceData, m interf
 	//kubectl delete --ignore-not-found=true -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/client-cluster-uninstall.yaml
 
 	deleteUrlYaml := fmt.Sprintf("%s/cluster-registration/k8s/client-cluster-uninstall.yaml", c.HostURL)
-	fmt.Printf("---------------------------------------------\n")
-	fmt.Printf("deleteUrlYaml: %s\n", deleteUrlYaml)
-	fmt.Printf("---------------------------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
+	tflog.Debug(ctx, fmt.Sprintf("deleteUrlYaml: %s", deleteUrlYaml))
+	tflog.Debug(ctx, fmt.Sprintf("---------------------------------------------"))
 	deleteCmd := exec.Command("kubectl", "--context", kubernetesContext, "delete", "--ignore-not-found=true", "-f", deleteUrlYaml)
 
 	execDeleteCmdStdout, execDeleteCmdErr := deleteCmd.Output()
-	fmt.Printf("\n-----------------[kubectl-c]----------------------------\n")
+	tflog.Debug(ctx, fmt.Sprintf("-----------------[kubectl-c]----------------------------"))
 	fmt.Print(string(execDeleteCmdStdout))
 
 	if execDeleteCmdErr != nil {
