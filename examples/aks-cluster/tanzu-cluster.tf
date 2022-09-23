@@ -1,9 +1,6 @@
-provider "tanzu" {
-  //host = "https://prod-4.nsxservicemesh.vmware.com"
-  //apikey = ""
-}
 
-resource "tanzu_cluster" "cluster" {
+
+resource "tanzu_cluster" "aks" {
   depends_on = [null_resource.kubectl]
   display_name = azurerm_kubernetes_cluster.k8s.name
   //cluster_name =  azurerm_kubernetes_cluster.k8s.name

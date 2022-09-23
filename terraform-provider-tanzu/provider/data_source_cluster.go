@@ -15,42 +15,47 @@ func dataSourceCluster() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
+			},
+			"last_updated": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
 			},
 			"display_name": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"state": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"auto_install_servicemesh": &schema.Schema{
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"enable_namespace_exclusions": &schema.Schema{
 				Type:     schema.TypeBool,
-				Optional: true,
+				Computed: true,
 			},
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"description": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"tags": &schema.Schema{
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 			"labels": {
 				Type:     schema.TypeMap,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -58,17 +63,17 @@ func dataSourceCluster() *schema.Resource {
 
 			"namespace_exclusion": {
 				Type:     schema.TypeSet,
-				Optional: true,
+				Computed: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"type": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
 						},
 
 						"match": {
 							Type:     schema.TypeString,
-							Required: true,
+							Computed: true,
 						},
 					},
 				},
@@ -78,27 +83,43 @@ func dataSourceCluster() *schema.Resource {
 }
 
 func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	tc := m.(*tc.Client)
+	c := m.(*tc.Client)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	clusterID := d.Get("id").(string)
+	id := d.Id()
 
-	cl, err := tc.GetCluster(clusterID)
+	cl, err := c.GetCluster(id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	// Set top level values
-	d.Set("id", cl.ID)
-	d.Set("display_name", cl.DisplayName)
-	d.Set("token", cl.Token)
-	d.Set("auto_install_servicemesh", cl.AutoInstallServiceMesh)
-	d.Set("description", cl.Description)
-	d.Set("enable_namespace_exclusions", cl.EnableNamespaceExclusions)
-	d.Set("state", cl.Status.State)
-	d.Set("sync_state", cl.SyncStatus.State)
+	if err := d.Set("id", cl.ID); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("display_name", cl.DisplayName); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("token", cl.Token); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("auto_install_servicemesh", cl.AutoInstallServiceMesh); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("description", cl.Description); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("enable_namespace_exclusions", cl.EnableNamespaceExclusions); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("state", cl.Status.State); err != nil {
+		return diag.FromErr(err)
+	}
+	if err := d.Set("sync_state", cl.SyncStatus.State); err != nil {
+		return diag.FromErr(err)
+	}
 
 	// Set labels
 	labels := make(map[string]any)
@@ -128,30 +149,18 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 	// 	return diag.FromErr(err)
 	// }
 
-	d.SetId(clusterID)
+	d.SetId(id)
 
 	return diags
 }
 
-func dataSourceCoffees() *schema.Resource {
-	return &schema.Resource{
-		ReadContext: dataSourceClustersRead,
-		Schema: map[string]*schema.Schema{
-			"clusters": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-		},
-	}
-}
-
 func dataSourceClustersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	tc := m.(*tc.Client)
+	c := m.(*tc.Client)
 
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
-	clusters, err := tc.GetClusters()
+	clusters, err := c.GetClusters()
 	if err != nil {
 		return diag.FromErr(err)
 	}

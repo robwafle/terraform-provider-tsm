@@ -18,9 +18,17 @@ func resourceCluster() *schema.Resource {
 		ReadContext:   resourceClusterRead,
 		UpdateContext: resourceClusterUpdate,
 		DeleteContext: resourceClusterDelete,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
 		Schema: map[string]*schema.Schema{
 			"id": &schema.Schema{
 				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"last_updated": &schema.Schema{
+				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"display_name": &schema.Schema{
@@ -159,6 +167,8 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 	fmt.Printf("\n Setting ID...\n")
 	d.SetId(displayName)
+
+	resourceClusterRead(ctx, d, m)
 
 	return diags
 

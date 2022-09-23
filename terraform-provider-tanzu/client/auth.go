@@ -1,10 +1,10 @@
 package client
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -12,7 +12,7 @@ import (
 )
 
 // SignIn - Get a new token for user
-func (c *Client) SignIn() (*AuthResponse, error) {
+func (c *Client) SignIn(ctx context.Context) (*AuthResponse, error) {
 	//var body []byte
 	var resp *http.Response
 
@@ -30,14 +30,17 @@ func (c *Client) SignIn() (*AuthResponse, error) {
 	req, err := http.NewRequest("POST", c.AuthURL, strings.NewReader(data.Encode()))
 	if err == nil {
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		debug(httputil.DumpRequestOut(req, true))
+		httputil.DumpRequestOut(req, true)
 		resp, err = (&http.Client{}).Do(req)
 	}
 
 	if err == nil {
 		defer resp.Body.Close()
-		debug(httputil.DumpResponse(resp, true))
+		httputil.DumpResponse(resp, true)
 		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 		ar := AuthResponse{}
 		err = json.Unmarshal(body, &ar)
 		if err != nil {
@@ -47,12 +50,4 @@ func (c *Client) SignIn() (*AuthResponse, error) {
 	}
 
 	return nil, nil
-}
-
-func debug(data []byte, err error) {
-	if err == nil {
-		fmt.Printf("%s\n\n", data)
-	} else {
-		log.Fatalf("%s\n\n", err)
-	}
 }

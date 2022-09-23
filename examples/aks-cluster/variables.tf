@@ -9,5 +9,5 @@ variable "password" {
 variable "tenantId" {}
 
 variable "clusterPrefix" {
-  default = "tanzu-two"
+  default = "tanzu-one"
 }

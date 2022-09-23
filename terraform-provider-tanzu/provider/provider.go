@@ -3,9 +3,9 @@ package provider
 import (
 	"context"
 	"fmt"
-
 	tc "terraform-provider-tanzu/plugin/client"
 
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -14,22 +14,24 @@ import (
 func Provider() *schema.Provider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"host": &schema.Schema{
+			"host": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("TANZU_HOST", nil),
 			},
-			"apikey": &schema.Schema{
+			"apikey": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("TANZU_APIKEY", nil),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"tanzu_cluster": resourceCluster(),
+			"tanzu_cluster":         resourceCluster(),
+			"tanzu_globalnamespace": resourceGlobalNamespace(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"tanzu_cluster": dataSourceCluster(),
+			"tanzu_cluster":         dataSourceCluster(),
+			"tanzu_globalnamespace": dataSourceGlobalNamespace(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
@@ -40,7 +42,7 @@ func Provider() *schema.Provider {
 
 // 	var cluster_name, resource_group string
 
-// 	fmt.Printf("Configuring Kubectl ...\n")
+// 	tflog.Debug(ctx, fmt.Sprintf("Configuring Kubectl ...\n")
 
 // 	// Authenticate to cluster using az aks get credentials.
 // 	// TODO: learn how to write config file given previous terraform step using client cert and certificate authority cert
@@ -58,14 +60,14 @@ func Provider() *schema.Provider {
 // 	}
 
 // 	if cluster_name != "" && resource_group != "" {
-// 		fmt.Printf("\n-----------------[kubectl-config]----------------------------\n")
-// 		fmt.Printf("Configuring .kube/config using az aks get-credentials. Using resource_group: %s, cluster_name: %s ...", resource_group, cluster_name)
+// 		tflog.Debug(ctx, fmt.Sprintf("\n-----------------[kubectl-config]----------------------------\n")
+// 		tflog.Debug(ctx, fmt.Sprintf("Configuring .kube/config using az aks get-credentials. Using resource_group: %s, cluster_name: %s ...", resource_group, cluster_name)
 // 		kubeConfig := exec.Command("az", "aks", "get-credentials", "--resource-group", resource_group, "--name", cluster_name)
 // 		execkubeConfigStdout, execkubeConfigErr := kubeConfig.Output()
 
 // 		fmt.Print(string(execkubeConfigStdout))
 
-// 		fmt.Printf("\n-----------------[kubectl-config]----------------------------\n")
+// 		tflog.Debug(ctx, fmt.Sprintf("\n-----------------[kubectl-config]----------------------------\n")
 // 		if execkubeConfigErr != nil {
 // 			fmt.Print(execkubeConfigErr.Error())
 // 			diags = append(diags, diag.Diagnostic{
@@ -86,7 +88,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	var host, apikey string
 
-	fmt.Printf("Configuring Provider ...\n")
+	tflog.Debug(ctx, fmt.Sprintf("Configuring Provider ...\n"))
 
 	// authenticate to tanzu
 	apikeyVal, ok := d.GetOk("apikey")
@@ -103,9 +105,9 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	if apikey != "" {
 		c, err := tc.NewClient(ctx, &host, &apikey)
-		fmt.Printf("===================================================")
-		fmt.Printf("host: %s, apikey: %s", host, apikey)
-		fmt.Printf("===================================================")
+		tflog.Debug(ctx, fmt.Sprintf("==================================================="))
+		tflog.Debug(ctx, fmt.Sprintf("host: %s, apikey: %s", host, apikey))
+		tflog.Debug(ctx, fmt.Sprintf("==================================================="))
 		if err != nil {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,

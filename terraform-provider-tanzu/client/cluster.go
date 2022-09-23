@@ -87,7 +87,7 @@ func (c *Client) CreateCluster(cluster Cluster, authToken *string) (*Cluster, er
 	fmt.Printf("%s\n", clusterJSON)
 	fmt.Printf("---------------------------------------------\n")
 	req, err := http.NewRequest("PUT", putUrl, bytes.NewBuffer(clusterJSON))
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,6 @@ func (c *Client) UpdateCluster(cluster Cluster, authToken *string) (*Cluster, er
 	fmt.Printf("%s\n", clusterJSON)
 	fmt.Printf("---------------------------------------------\n")
 	req, err := http.NewRequest("PUT", putUrl, bytes.NewBuffer(clusterJSON))
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +146,6 @@ func (c *Client) DeleteCluster(id string, authToken *string) (*Cluster, error) {
 	fmt.Printf("---------------------------------------------\n")
 
 	req, err := http.NewRequest("DELETE", deleteUrl, nil)
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	if err != nil {
 		return nil, err
 	}

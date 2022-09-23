@@ -12,14 +12,14 @@ terraform {
     #   source  = "cloudflare/cloudflare"
     #   version = "=3.9.1"
     # }
-    helm = {
-      source  = "helm"
-      version = "=2.6.0"
-    }
-    kubernetes = {
-      source  = "kubernetes"
-      version = "=2.8.0"
-    }
+    # helm = {
+    #   source  = "helm"
+    #   version = "=2.6.0"
+    # }
+    # kubernetes = {
+    #   source  = "kubernetes"
+    #   version = "=2.8.0"
+    # }
   }
 
   required_version = ">= 0.14"

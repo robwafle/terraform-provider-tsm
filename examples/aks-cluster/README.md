@@ -9,10 +9,16 @@ TANZU_APIKEY: <its-a-secret>
 pushd ../../terraform-provider-tanzu ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
 ```
 
-# plan
+# clean up if it all goes wrong
+```
+rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan; rm tfplan.txt ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; 
+```
+
+# plan, if you get a checksum error you didn't update the version in Makefile.
 ```
 rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan -out=tfplan; terraform show tfplan | tee tfplan.txt; 
 ```
+
 
 # apply
 ```

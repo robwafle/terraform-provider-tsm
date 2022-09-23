@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
-	//logger "github.com/hashicorp/terraform-plugin-log"
+
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // HostURL - Default Hashicups URL
@@ -65,7 +66,7 @@ func NewClient(ctx context.Context, host *string, apikey *string) (*Client, erro
 		apikey: *apikey,
 	}
 
-	ar, err := c.SignIn()
+	ar, err := c.SignIn(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,8 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 	}
 
 	req.Header.Set("csp-auth-token", token)
-
+	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
+	req.Header.Set("accept", "application/json")
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -94,12 +96,12 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	fmt.Printf("\n-------------------------------------\n")
-	fmt.Printf("request.URL: %s\n", req.URL)
-	fmt.Printf("request.METHOD: %s\n", req.Method)
-	fmt.Printf("\n-------------------------------------\n")
-	//fmt.Printf("%s", body)
-	fmt.Printf("\n-------------------------------------\n")
+	tflog.Debug(c.ctx, fmt.Sprintf("-------------------------------------"))
+	tflog.Debug(c.ctx, fmt.Sprintf("request.URL: %s", req.URL))
+	tflog.Debug(c.ctx, fmt.Sprintf("request.METHOD: %s", req.Method))
+	tflog.Debug(c.ctx, fmt.Sprintf("-------------------------------------"))
+	//tflog.Debug(c.ctx,fmt.Printf("%s", body))
+	tflog.Debug(c.ctx, fmt.Sprintf("-------------------------------------"))
 
 	if err != nil {
 		return nil, err
@@ -108,8 +110,10 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 	// check that this was successful (perhaps shoudl check if 500?)
 	httpOK := res.StatusCode == http.StatusOK
 	httpSubmitted := res.StatusCode == http.StatusAccepted
+	httpDeleted := res.StatusCode == http.StatusNoContent
+	httpCreated := res.StatusCode == http.StatusCreated
 
-	if !(httpSubmitted || httpOK) {
+	if !(httpSubmitted || httpOK || httpCreated || httpDeleted) {
 		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 	}
 
