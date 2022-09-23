@@ -266,20 +266,23 @@ func resourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m 
 	d.Set("version", globalNamespace.Version)
 	d.Set("api_discovery_enabled", globalNamespace.ApiDiscoveryEnabled)
 
-	// tflog.Debug(ctx, "Setting MatchConditions ... ")
+	tflog.Debug(ctx, "Setting MatchConditions ... ")
 	// Set NamespaceExclusions
-	// namespace_exclusions := make([]map[string]any, 0)
+	match_conditions := make([]interface{}, len(globalNamespace.MatchConditions))
 
-	// for _, ne := range cl.NamespaceExclusions {
-	// 	namespace_exclusion := make(map[string]any)
-	// 	namespace_exclusion["match"] = ne.Match
-	// 	namespace_exclusion["type"] = ne.Type
-	// 	namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
-	// }
+	for i, mc := range globalNamespace.MatchConditions {
+		match_condition := make(map[string]interface{})
+		match_condition["cluster_type"] = mc.ClusterMatchCondition.Type
+		match_condition["cluster_match"] = mc.ClusterMatchCondition.Match
+		match_condition["namespace_type"] = mc.NamespaceMatchCondition.Type
+		match_condition["namespace_match"] = mc.NamespaceMatchCondition.Match
+		match_conditions[i] = match_condition
+	}
+	d.Set("match_condition", match_conditions)
 
-	// if err := d.Set("namespace_exclusions", namespace_exclusions); err != nil {
-	// 	return diag.FromErr(err)
-	// }
+	if err := d.Set("match_condition", match_conditions); err != nil {
+		return diag.FromErr(err)
+	}
 	tflog.Debug(ctx, "Setting Id ... ")
 	//d.SetId(globalNamespace.ID)
 	tflog.Debug(ctx, "Done with resourceGlobalNamespaceRead ...")

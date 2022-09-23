@@ -258,20 +258,20 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	tflog.Trace(ctx, "Setting NamespaceExclusions ... ")
 	// Set NamespaceExclusions
-	// namespace_exclusions := make([]map[string]any, 0)
+	namespace_exclusions := make([]interface{}, len(cl.NamespaceExclusions))
 
-	// for _, ne := range cl.NamespaceExclusions {
-	// 	namespace_exclusion := make(map[string]any)
-	// 	namespace_exclusion["match"] = ne.Match
-	// 	namespace_exclusion["type"] = ne.Type
-	// 	namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
-	// }
+	for i, ne := range cl.NamespaceExclusions {
+		namespace_exclusion := make(map[string]interface{})
+		namespace_exclusion["match"] = ne.Match
+		namespace_exclusion["type"] = ne.Type
+		namespace_exclusions[i] = namespace_exclusion
+	}
 
-	// if err := d.Set("namespace_exclusions", namespace_exclusions); err != nil {
-	// 	return diag.FromErr(err)
-	// }
+	if err := d.Set("namespace_exclusion", namespace_exclusions); err != nil {
+		return diag.FromErr(err)
+	}
 	tflog.Trace(ctx, "Setting Id ... ")
-	d.SetId(cl.ID)
+	//d.SetId(cl.ID)
 	tflog.Trace(ctx, "Done with resourceClusterRead ... ")
 	return diags
 }
