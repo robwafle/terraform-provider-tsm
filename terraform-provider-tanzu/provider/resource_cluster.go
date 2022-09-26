@@ -43,6 +43,7 @@ func resourceCluster() *schema.Resource {
 			"token": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
+				Computed: true,
 			},
 			"auto_install_servicemesh": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -153,6 +154,22 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		}
 	} else {
 		tflog.Trace(ctx, "Skipping Secret Creation!!!")
+	}
+
+	sleepTime := time.Second * 10
+	for ok := true; ok; ok = cl != nil && cl.Status != nil && cl.SyncStatus != nil && cl.Status.State == "Ready" && cl.SyncStatus.State == "Synced" {
+		tflog.Info(ctx, "Waiting for Cluster.Status.State == 'Ready' and Cluster.SyncStatus.State == 'Synced' ... ")
+		time.Sleep(sleepTime)
+		cl, err = c.GetCluster(ctx, displayName)
+		if err != nil {
+			if err.Error() == "404" {
+				tflog.Info(ctx, "Got 404, continuing ... ")
+				continue
+			} else {
+				return diag.FromErr(err)
+			}
+		}
+		tflog.Info(ctx, fmt.Sprintf("Cluster.Status.State: %s, Cluster.SyncStatus.State: %s", cl.Status.State, cl.SyncStatus.State))
 	}
 
 	// if err := d.Set("display_name", cl.DisplayName); err != nil {
@@ -270,6 +287,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if err := d.Set("namespace_exclusion", namespace_exclusions); err != nil {
 		return diag.FromErr(err)
 	}
+
 	tflog.Trace(ctx, "Setting Id ... ")
 	//d.SetId(cl.ID)
 	tflog.Trace(ctx, "Done with resourceClusterRead ... ")

@@ -21,6 +21,4 @@ resource "tanzu_globalnamespace" "default" {
   }
 }
 
-data "tanzu_globalnamespace" "default" {
-}
 

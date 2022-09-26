@@ -105,10 +105,10 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 	httpSubmitted := res.StatusCode == http.StatusAccepted
 	httpDeleted := res.StatusCode == http.StatusNoContent
 	httpCreated := res.StatusCode == http.StatusCreated
-	httpNotFound := res.StatusCode == http.StatusNotFound
+	//httpNotFound := res.StatusCode == http.StatusNotFound
 
-	if !(httpSubmitted || httpOK || httpCreated || httpDeleted || httpNotFound) {
-		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
+	if !(httpSubmitted || httpOK || httpCreated || httpDeleted) {
+		return nil, fmt.Errorf("%d", res.StatusCode)
 	}
 
 	return body, err

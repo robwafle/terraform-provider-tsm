@@ -278,7 +278,6 @@ func resourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m 
 		match_condition["namespace_match"] = mc.NamespaceMatchCondition.Match
 		match_conditions[i] = match_condition
 	}
-	d.Set("match_condition", match_conditions)
 
 	if err := d.Set("match_condition", match_conditions); err != nil {
 		return diag.FromErr(err)

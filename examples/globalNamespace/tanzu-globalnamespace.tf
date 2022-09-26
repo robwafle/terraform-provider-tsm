@@ -8,7 +8,7 @@ resource "tanzu_globalnamespace" "default" {
   api_discovery_enabled = true
   ca_type = "PreExistingCA"
   ca = "default"
-  description = "created via terraform zzz"
+  description = "created via terraform"
   color = "#00FF00"
   version = "2.0"
     
@@ -17,6 +17,13 @@ resource "tanzu_globalnamespace" "default" {
     cluster_match = "test-cluster"
     namespace_type = "EXACT"
     namespace_match = "default"
+  }
+  
+  match_condition {
+    cluster_type = "EXACT"
+    cluster_match = "test2-cluster"
+    namespace_type = "EXACT"
+    namespace_match = "other"
   }
 }
 
