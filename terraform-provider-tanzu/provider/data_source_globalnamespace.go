@@ -2,7 +2,6 @@ package provider
 
 import (
 	"context"
-	"fmt"
 	tc "terraform-provider-tanzu/plugin/client"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
@@ -14,52 +13,52 @@ func dataSourceGlobalNamespace() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGlobalNamespaceRead,
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"last_updated": &schema.Schema{
+			"last_updated": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"display_name": &schema.Schema{
+			"display_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"domain_name": &schema.Schema{
+			"domain_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"use_shared_gateway": &schema.Schema{
+			"use_shared_gateway": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"mtls_enforced": &schema.Schema{
+			"mtls_enforced": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"ca_type": &schema.Schema{
+			"ca_type": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"ca": &schema.Schema{
+			"ca": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"color": &schema.Schema{
+			"color": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"version": &schema.Schema{
+			"version": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -87,7 +86,7 @@ func dataSourceGlobalNamespace() *schema.Resource {
 					},
 				},
 			},
-			"api_discovery_enabled": &schema.Schema{
+			"api_discovery_enabled": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
@@ -108,7 +107,7 @@ func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Setting Root Level Fields ... "))
+	tflog.Debug(ctx, "Setting Root Level Fields ... ")
 	if err := d.Set("id", GlobalNamespace.ID); err != nil {
 		return diag.FromErr(err)
 	}
@@ -149,7 +148,7 @@ func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, 
 		return diag.FromErr(err)
 	}
 
-	tflog.Debug(ctx, fmt.Sprintf("Setting MatchConditions ... "))
+	tflog.Debug(ctx, "Setting MatchConditions ... ")
 	// Set NamespaceExclusions
 	// namespace_exclusions := make([]map[string]any, 0)
 
@@ -165,31 +164,32 @@ func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, 
 	// }
 	d.SetId(id)
 
-	tflog.Debug(ctx, fmt.Sprintf("Done with resourceGlobalNamespaceRead ... "))
+	tflog.Debug(ctx, "Done with resourceGlobalNamespaceRead ... ")
 	return diags
 }
 
-func dataSourceGlobalNamespacesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*tc.Client)
+// func dataSourceGlobalNamespacesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+// 	c := m.(*tc.Client)
 
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
+// 	// Warning or errors can be collected in a slice type
+// 	var diags diag.Diagnostics
 
-	GlobalNamespaces, err := c.GetGlobalNamespaces(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+// 	GlobalNamespaces, err := c.GetGlobalNamespaces(ctx)
+// 	if err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	GlobalNamespacesList := make([]string, len(GlobalNamespaces.IDs))
-	for i, id := range GlobalNamespaces.IDs {
-		GlobalNamespacesList[i] = id
-	}
+// 	GlobalNamespacesList := make([]string, len(GlobalNamespaces.IDs))
+// 	// for i, id := range GlobalNamespaces.IDs {
+// 	// 	GlobalNamespacesList[i] = id
+// 	// }
+// 	copy(GlobalNamespacesList, GlobalNamespaces.IDs)
 
-	if err := d.Set("GlobalNamespaces", GlobalNamespacesList); err != nil {
-		return diag.FromErr(err)
-	}
+// 	if err := d.Set("GlobalNamespaces", GlobalNamespacesList); err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	//d.SetId(display_name)
+// 	//d.SetId(display_name)
 
-	return diags
-}
+// 	return diags
+// }

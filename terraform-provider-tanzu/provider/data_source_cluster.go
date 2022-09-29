@@ -13,40 +13,40 @@ func dataSourceCluster() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceClusterRead,
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
+			"id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"last_updated": &schema.Schema{
+			"last_updated": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 			},
-			"display_name": &schema.Schema{
+			"display_name": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"state": &schema.Schema{
+			"state": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"auto_install_servicemesh": &schema.Schema{
+			"auto_install_servicemesh": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"enable_namespace_exclusions": &schema.Schema{
+			"enable_namespace_exclusions": {
 				Type:     schema.TypeBool,
 				Computed: true,
 			},
-			"token": &schema.Schema{
+			"token": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": &schema.Schema{
+			"tags": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Schema{
@@ -154,27 +154,28 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 	return diags
 }
 
-func dataSourceClustersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
-	c := m.(*tc.Client)
+// func dataSourceClustersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+// 	c := m.(*tc.Client)
 
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
+// 	// Warning or errors can be collected in a slice type
+// 	var diags diag.Diagnostics
 
-	clusters, err := c.GetClusters(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+// 	clusters, err := c.GetClusters(ctx)
+// 	if err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	clustersList := make([]string, len(clusters.IDs))
-	for i, id := range clusters.IDs {
-		clustersList[i] = id
-	}
+// 	clustersList := make([]string, len(clusters.IDs))
+// 	// for i, id := range clusters.IDs {
+// 	// 	clustersList[i] = id
+// 	// }
+// 	copy(clustersList, clusters.IDs)
 
-	if err := d.Set("clusters", clustersList); err != nil {
-		return diag.FromErr(err)
-	}
+// 	if err := d.Set("clusters", clustersList); err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	//d.SetId(display_name)
+// 	//d.SetId(display_name)
 
-	return diags
-}
+// 	return diags
+// }

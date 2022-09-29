@@ -13,6 +13,77 @@ import (
 	tc "terraform-provider-tanzu/plugin/client"
 )
 
+func ResourceClusterSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"id": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"last_updated": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		"display_name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"kubernetes_context": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"token": {
+			Type:     schema.TypeString,
+			Optional: true,
+			Computed: true,
+		},
+		"auto_install_servicemesh": {
+			Type:     schema.TypeBool,
+			Required: true,
+		},
+		"enable_namespace_exclusions": {
+			Type:     schema.TypeBool,
+			Required: true,
+		},
+		"description": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"tags": {
+			Type:     schema.TypeSet,
+			Required: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+		"labels": {
+			Type:     schema.TypeMap,
+			Optional: true,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+
+		"namespace_exclusion": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"type": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+
+					"match": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+				},
+			},
+		},
+	}
+}
+
 func resourceCluster() *schema.Resource {
 	return &schema.Resource{
 		CreateContext: resourceClusterCreate,
@@ -22,74 +93,7 @@ func resourceCluster() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"last_updated": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"display_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"kubernetes_context": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"token": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
-			"auto_install_servicemesh": &schema.Schema{
-				Type:     schema.TypeBool,
-				Required: true,
-			},
-			"enable_namespace_exclusions": &schema.Schema{
-				Type:     schema.TypeBool,
-				Required: true,
-			},
-			"description": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"tags": &schema.Schema{
-				Type:     schema.TypeSet,
-				Required: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-			"labels": {
-				Type:     schema.TypeMap,
-				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
-
-			"namespace_exclusion": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"type": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-
-						"match": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-					},
-				},
-			},
-		},
+		Schema: ResourceClusterSchema(),
 	}
 }
 
@@ -102,7 +106,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 	displayName := d.Get("display_name").(string)
 	kubernetesContext := d.Get("kubernetes_context").(string)
 	tflog.Trace(ctx, "Mapping Cluster From Schema...")
-	clusterToCreate, mapClusterToCreateError := mapClusterFromSchema(ctx, d)
+	clusterToCreate, mapClusterToCreateError := MapClusterFromSchema(d)
 
 	tflog.Trace(ctx, "Checking Errors...")
 	if mapClusterToCreateError != nil {
@@ -185,9 +189,11 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 }
 
-func mapClusterFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.Cluster, error) {
+func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
+	ID := d.Get("id").(string)
 	displayName := d.Get("display_name").(string)
 	description := d.Get("description").(string)
+	token := d.Get("token").(string)
 	enableNamespaceExclusions := d.Get("enable_namespace_exclusions").(bool)
 	autoInstallServiceMesh := d.Get("auto_install_servicemesh").(bool)
 
@@ -202,8 +208,6 @@ func mapClusterFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.Clus
 	_labels := d.Get("labels").(map[string]any)
 	labels := []tc.Label{}
 
-	tflog.Trace(ctx, fmt.Sprintf("_labels: %d", len(_labels)))
-
 	for key, value := range _labels {
 		label := tc.Label{
 			Key:   key,
@@ -214,8 +218,6 @@ func mapClusterFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.Clus
 
 	_namespace_exclusions := d.Get("namespace_exclusion").(*schema.Set).List()
 	namespace_exclusions := []tc.NamespaceExclusion{}
-
-	tflog.Trace(ctx, fmt.Sprintf("_namespace_exclusions: %d", len(_namespace_exclusions)))
 
 	for _, namespace_exclusion := range _namespace_exclusions {
 		ne, lbok := namespace_exclusion.(map[string]any)
@@ -229,8 +231,10 @@ func mapClusterFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.Clus
 	}
 
 	cluster := tc.Cluster{
+		ID:                        ID,
 		DisplayName:               displayName,
 		Description:               description,
+		Token:                     token,
 		AutoInstallServiceMesh:    autoInstallServiceMesh,
 		Tags:                      tags,
 		NamespaceExclusions:       namespace_exclusions,
@@ -298,7 +302,7 @@ func resourceClusterUpdate(ctx context.Context, d *schema.ResourceData, m interf
 	c := m.(*tc.Client)
 	//kubectlConfigure(ctx, d)
 
-	clusterToUpdate, clusterToUpdateError := mapClusterFromSchema(ctx, d)
+	clusterToUpdate, clusterToUpdateError := MapClusterFromSchema(d)
 	if clusterToUpdateError != nil {
 		return diag.FromErr(clusterToUpdateError)
 	}

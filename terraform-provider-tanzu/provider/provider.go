@@ -85,7 +85,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	var host, apikey string
 
-	tflog.Debug(ctx, fmt.Sprintf("Configuring Provider ...\n"))
+	tflog.Debug(ctx, "Configuring Provider")
 
 	// authenticate to tanzu
 	apikeyVal, ok := d.GetOk("apikey")
@@ -102,9 +102,6 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	if apikey != "" {
 		c, err := tc.NewClient(ctx, &host, &apikey)
-		tflog.Debug(ctx, fmt.Sprintf("==================================================="))
-		tflog.Debug(ctx, fmt.Sprintf("host: %s, apikey: %s", host, apikey))
-		tflog.Debug(ctx, fmt.Sprintf("==================================================="))
 		if err != nil {
 			diags = append(diags, diag.Diagnostic{
 				Severity: diag.Error,

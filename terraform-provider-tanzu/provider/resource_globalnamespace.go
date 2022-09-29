@@ -21,84 +21,88 @@ func resourceGlobalNamespace() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-			},
-			"last_updated": &schema.Schema{
-				Type:     schema.TypeString,
-				Computed: true,
-				Optional: true,
-			},
-			"name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"display_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"domain_name": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"use_shared_gateway": &schema.Schema{
-				Type:     schema.TypeBool,
-				Required: true,
-			},
-			"mtls_enforced": &schema.Schema{
-				Type:     schema.TypeBool,
-				Required: true,
-			},
-			"ca_type": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"ca": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"description": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"color": &schema.Schema{
-				Type:     schema.TypeString,
-				Optional: true,
-			},
-			"version": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
-			},
-			"match_condition": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"cluster_type": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"cluster_match": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"namespace_type": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"namespace_match": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
+		Schema: ResourceGlobalNamespaceSchema(),
+	}
+}
+
+func ResourceGlobalNamespaceSchema() map[string]*schema.Schema {
+	return map[string]*schema.Schema{
+		"id": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+		"last_updated": {
+			Type:     schema.TypeString,
+			Computed: true,
+			Optional: true,
+		},
+		"name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"display_name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"domain_name": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"use_shared_gateway": {
+			Type:     schema.TypeBool,
+			Required: true,
+		},
+		"mtls_enforced": {
+			Type:     schema.TypeBool,
+			Required: true,
+		},
+		"ca_type": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"ca": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"description": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"color": {
+			Type:     schema.TypeString,
+			Optional: true,
+		},
+		"version": {
+			Type:     schema.TypeString,
+			Required: true,
+		},
+		"match_condition": {
+			Type:     schema.TypeSet,
+			Optional: true,
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"cluster_type": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					"cluster_match": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					"namespace_type": {
+						Type:     schema.TypeString,
+						Required: true,
+					},
+					"namespace_match": {
+						Type:     schema.TypeString,
+						Required: true,
 					},
 				},
 			},
-			"api_discovery_enabled": &schema.Schema{
-				Type:     schema.TypeBool,
-				Required: true,
-			},
+		},
+		"api_discovery_enabled": {
+			Type:     schema.TypeBool,
+			Required: true,
 		},
 	}
 }
@@ -150,7 +154,7 @@ func resourceGlobalNamespaceCreate(ctx context.Context, d *schema.ResourceData, 
 	c := m.(*tc.Client)
 
 	tflog.Debug(ctx, "Mapping GlobalNamespace From Schema...")
-	resource, maperror := mapGlobalNamespaceFromSchema(ctx, d)
+	resource, maperror := MapGlobalNamespaceFromSchema(d)
 
 	tflog.Debug(ctx, "Checking Errors...")
 	if maperror != nil {
@@ -174,8 +178,8 @@ func resourceGlobalNamespaceCreate(ctx context.Context, d *schema.ResourceData, 
 
 }
 
-func mapGlobalNamespaceFromSchema(ctx context.Context, d *schema.ResourceData) (*tc.GlobalNamespace, error) {
-	//id := d.Get("id").(string)
+func MapGlobalNamespaceFromSchema(d *schema.ResourceData) (*tc.GlobalNamespace, error) {
+	ID := d.Get("id").(string)
 	Name := d.Get("name").(string)
 	DisplayName := d.Get("display_name").(string)
 	DomainName := d.Get("domain_name").(string)
@@ -214,7 +218,7 @@ func mapGlobalNamespaceFromSchema(ctx context.Context, d *schema.ResourceData) (
 	}
 
 	globalNamespace := tc.GlobalNamespace{
-		//ID:                  id,
+		ID:                  ID,
 		Name:                Name,
 		DisplayName:         DisplayName,
 		DomainName:          DomainName,
@@ -291,7 +295,7 @@ func resourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m 
 func resourceGlobalNamespaceUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
 
-	resourceToUpdate, resourceToUpdateError := mapGlobalNamespaceFromSchema(ctx, d)
+	resourceToUpdate, resourceToUpdateError := MapGlobalNamespaceFromSchema(d)
 	if resourceToUpdateError != nil {
 		return diag.FromErr(resourceToUpdateError)
 	}
