@@ -189,7 +189,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 }
 
-func (d *schema.ResourceData) (*tc.Cluster, error) {
+func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 	ID := d.Get("id").(string)
 	displayName := d.Get("display_name").(string)
 	description := d.Get("description").(string)
