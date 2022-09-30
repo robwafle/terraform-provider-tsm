@@ -12,9 +12,9 @@ type OrderItem struct {
 	Quantity int     `json:"quantity"`
 }
 
-type Tag struct {
-	Name string `json:"name"`
-}
+// type Tag struct {
+// 	Name string `json:"name"`
+// }
 
 type Label struct {
 	Key   string `json:"key"`

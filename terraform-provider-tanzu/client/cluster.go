@@ -31,7 +31,6 @@ func (c *Client) GetClusters(ctx context.Context) (*Clusters, error) {
 	return &Clusters, nil
 }
 
-// GetCluster - Returns specific Cluster (no auth required)
 func (c *Client) GetCluster(ctx context.Context, id string) (*Cluster, error) {
 
 	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/tsm/v1alpha1/clusters/%s", c.HostURL, id), nil)

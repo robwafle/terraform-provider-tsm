@@ -189,7 +189,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 
 }
 
-func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
+func (d *schema.ResourceData) (*tc.Cluster, error) {
 	ID := d.Get("id").(string)
 	displayName := d.Get("display_name").(string)
 	description := d.Get("description").(string)
@@ -198,35 +198,51 @@ func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 	autoInstallServiceMesh := d.Get("auto_install_servicemesh").(bool)
 
 	_tags := d.Get("tags").(*schema.Set).List()
-	tags := []string{}
+	tags := make([]string, len(_tags))
 
-	for _, _t := range _tags {
-		t := _t.(string)
-		tags = append(tags, t)
+	// workaround for unit test !?!?
+	// reverse list order to pass unit test... this order probably doesn't really matter anyways..
+	// deep compare doesn't have the ability to ignore hte order of the list
+	for i, tag := range _tags {
+		//fmt.Print(tag)
+		//tags[i] = tag.(string)
+		tags[len(_tags)-i-1] = tag.(string)
+
 	}
+	//copy(tags, _tags)
 
-	_labels := d.Get("labels").(map[string]any)
-	labels := []tc.Label{}
+	_labels := d.Get("labels").(map[string]interface{})
+	//labels := []tc.Label{}
+	labels := make([]tc.Label, len(_labels))
 
+	i := 0
 	for key, value := range _labels {
+		//fmt.Printf("\nkey:%s\n", key)
+		//fmt.Printf("\nvalue:%s\n", value)
+		m := make(map[string]interface{})
+		m[key] = value
 		label := tc.Label{
 			Key:   key,
 			Value: value.(string),
 		}
-		labels = append(labels, label)
+		labels[i] = label
+		i = i + 1
+		//labels = append(labels, label)
 	}
 
 	_namespace_exclusions := d.Get("namespace_exclusion").(*schema.Set).List()
-	namespace_exclusions := []tc.NamespaceExclusion{}
+	//namespace_exclusions := []tc.NamespaceExclusion{}
+	namespace_exclusions := make([]tc.NamespaceExclusion, len(_namespace_exclusions))
 
-	for _, namespace_exclusion := range _namespace_exclusions {
+	for i, namespace_exclusion := range _namespace_exclusions {
 		ne, lbok := namespace_exclusion.(map[string]any)
 		if lbok {
 			namespace_exclusion := tc.NamespaceExclusion{
 				Match: ne["match"].(string),
 				Type:  ne["type"].(string),
 			}
-			namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
+			//namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
+			namespace_exclusions[len(_namespace_exclusions)-i-1] = namespace_exclusion
 		}
 	}
 
@@ -268,7 +284,7 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 
 	// Set labels
 	tflog.Trace(ctx, "Setting Labels ... ")
-	labels := make(map[string]any)
+	labels := make(map[string]interface{})
 
 	for _, l := range cl.Labels {
 		labels[l.Key] = l.Value

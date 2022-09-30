@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -16,7 +16,7 @@ func (c *Client) SignIn(ctx context.Context) (*AuthResponse, error) {
 	//var body []byte
 	var resp *http.Response
 
-	if c.Auth.apikey == "" {
+	if c.Auth.Apikey == "" {
 		return nil, fmt.Errorf("apikey missing from tanzu provider config")
 	}
 	// rb, err := json.Marshal(c.Auth)
@@ -25,7 +25,7 @@ func (c *Client) SignIn(ctx context.Context) (*AuthResponse, error) {
 	// }
 
 	data := url.Values{}
-	data.Set("refresh_token", c.Auth.apikey)
+	data.Set("refresh_token", c.Auth.Apikey)
 
 	req, err := http.NewRequestWithContext(ctx, "POST", c.AuthURL, strings.NewReader(data.Encode()))
 	if err == nil {
@@ -37,7 +37,7 @@ func (c *Client) SignIn(ctx context.Context) (*AuthResponse, error) {
 	if err == nil {
 		defer resp.Body.Close()
 		httputil.DumpResponse(resp, true)
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}

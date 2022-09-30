@@ -2,6 +2,8 @@ module terraform-provider-tanzu/plugin
 
 go 1.19
 
+require github.com/go-test/deep v1.0.8
+
 require (
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect

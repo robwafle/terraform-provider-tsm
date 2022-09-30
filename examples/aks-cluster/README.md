@@ -50,3 +50,9 @@ kubectl run netshoot --rm -i --tty --image nicolaka/netshoot
 ```
  kubectl run netshoot --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}' --image nicolaka/netshoot
 ```
+
+# Unit testing
+In vscode, you can right click and choose "Go: Test Function At Cursor" or run the tests manually.
+```
+go test terraform-provider-tanzu/plugin/provider -v
+```

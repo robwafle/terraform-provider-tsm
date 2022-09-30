@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -28,7 +28,7 @@ type Client struct {
 
 // AuthStruct -
 type AuthStruct struct {
-	apikey string `json:"apikey"`
+	Apikey string `json:"apikey"`
 }
 
 // AuthResponse -
@@ -64,7 +64,7 @@ func NewClient(ctx context.Context, host *string, apikey *string) (*Client, erro
 	}
 
 	c.Auth = AuthStruct{
-		apikey: *apikey,
+		Apikey: *apikey,
 	}
 
 	ar, err := c.SignIn(ctx)
@@ -94,7 +94,7 @@ func (c *Client) doRequest(req *http.Request, authToken *string) ([]byte, error)
 	}
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 
 	if err != nil {
 		return nil, err
