@@ -1,6 +1,7 @@
 package provider_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	tc "terraform-provider-tanzu/plugin/client"
@@ -13,51 +14,56 @@ import (
 
 func TestMapGlobalNamespaceFromSchema(t *testing.T) {
 
-	// MatchConditions := []tc.MatchCondition{
-	// 	tc.MatchCondition{
-	// 		tc.NamespaceMatchCondition{
-	// 			Match: "ns_match1",
-	// 			Type:  "ns_type1",
-	// 		},
-	// 		tc.ClusterMatchCondition{
-	// 			Match: "cl_match1",
-	// 			Type:  "cl_nstype1",
-	// 		},
-	// 	},
-	// 	tc.MatchCondition{
-	// 		tc.NamespaceMatchCondition{
-	// 			Match: "ns_match2",
-	// 			Type:  "ns_type2",
-	// 		},
-	// 		tc.ClusterMatchCondition{
-	// 			Match: "cl_match2",
-	// 			Type:  "cl_nstype2",
-	// 		},
-	// 	},
-	// }
+	MatchConditions := []tc.MatchCondition{
+		{
+			NamespaceMatchCondition: tc.NamespaceMatchCondition{
+				Match: "ns_match1",
+				Type:  "ns_type1",
+			},
+			ClusterMatchCondition: tc.ClusterMatchCondition{
+				Match: "cl_match1",
+				Type:  "cl_nstype1",
+			},
+		},
+		{
+			NamespaceMatchCondition: tc.NamespaceMatchCondition{
+				Match: "ns_match2",
+				Type:  "ns_type2",
+			},
+			ClusterMatchCondition: tc.ClusterMatchCondition{
+				Match: "cl_match2",
+				Type:  "cl_nstype2",
+			},
+		},
+	}
+
+	matchConditionsExclusionsAsArrayOfInterface := make([]interface{}, len(MatchConditions))
+	for i, match_condition := range MatchConditions {
+		m := make(map[string]interface{})
+		m["cluster_type"] = match_condition.ClusterMatchCondition.Type
+		m["cluster_match"] = match_condition.ClusterMatchCondition.Match
+		m["namespace_type"] = match_condition.NamespaceMatchCondition.Type
+		m["namespace_match"] = match_condition.NamespaceMatchCondition.Match
+		matchConditionsExclusionsAsArrayOfInterface[i] = m
+	}
 
 	idAndDisplayNameAreTheSameValue := "idAndDisplayNameAreTheSameValue"
 	expected := tc.GlobalNamespace{
-		ID:                  idAndDisplayNameAreTheSameValue,
-		Name:                idAndDisplayNameAreTheSameValue,
-		DisplayName:         idAndDisplayNameAreTheSameValue,
-		DomainName:          "vmware.com",
-		UseSharedGateway:    true,
-		MtlsEnforced:        true,
-		CaType:              "PreExistingCA",
-		Ca:                  "default",
-		Description:         "created in unit test",
-		Color:               "#00FF00",
-		Version:             "2.0",
-	//	MatchConditions:     MatchConditions,
-		MatchConditions:     []tc.MatchCondition{},
+		ID:               idAndDisplayNameAreTheSameValue,
+		Name:             idAndDisplayNameAreTheSameValue,
+		DisplayName:      idAndDisplayNameAreTheSameValue,
+		DomainName:       "vmware.com",
+		UseSharedGateway: true,
+		MtlsEnforced:     true,
+		CaType:           "PreExistingCA",
+		Ca:               "default",
+		Description:      "created in unit test",
+		Color:            "#00FF00",
+		Version:          "2.0",
+		MatchConditions:  MatchConditions,
+
 		ApiDiscoveryEnabled: true,
 	}
-
-	//TODO?: perhaps find some automatic way to map struct to map (perhaps json marshal / unmarshal?)
-	// import structs above... but we need a different struct with a different json mapping matching the terrform schema
-	// for example, DisplayName needs to have json annotation display_name instead of displayName
-	//testData := structs.Map(&u1)
 
 	testData := map[string]interface{}{
 		"id":                    expected.ID,
@@ -71,7 +77,7 @@ func TestMapGlobalNamespaceFromSchema(t *testing.T) {
 		"description":           expected.Description,
 		"color":                 expected.Color,
 		"version":               expected.Version,
-		//"match_condition":       expected.MatchConditions,
+		"match_condition":       matchConditionsExclusionsAsArrayOfInterface,
 		"api_discovery_enabled": expected.ApiDiscoveryEnabled,
 	}
 
@@ -84,6 +90,16 @@ func TestMapGlobalNamespaceFromSchema(t *testing.T) {
 
 	if diff := deep.Equal(actual, &expected); diff != nil {
 		t.Error(diff)
+		actualJSON, error := json.Marshal(actual)
+		if error != nil {
+			t.Errorf("Error: %s", error.Error())
+		}
+		t.Errorf("actualJSON: %s", actualJSON)
+		expectedJSON, error := json.Marshal(expected)
+		if error != nil {
+			t.Errorf("Error: %s", error.Error())
+		}
+		t.Errorf("expectedJSON: %s", expectedJSON)
 	}
 
 }

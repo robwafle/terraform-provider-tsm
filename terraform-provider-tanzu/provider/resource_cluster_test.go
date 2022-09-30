@@ -83,10 +83,6 @@ func TestMapClusterFromSchema(t *testing.T) {
 
 		EnableNamespaceExclusions: true,
 	}
-	//TODO?: perhaps find some automatic way to map struct to map (perhaps json marshal / unmarshal?)
-	// import structs above... but we need a different struct with a different json mapping matching the terrform schema
-	// for example, DisplayName needs to have json annotation display_name instead of displayName
-	//testData := structs.Map(&u1)
 
 	testData := map[string]interface{}{
 		"id":                          expected.ID,

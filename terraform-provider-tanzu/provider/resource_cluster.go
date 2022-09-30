@@ -216,6 +216,7 @@ func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 	labels := make([]tc.Label, len(_labels))
 
 	i := 0
+	//labelsLen := len(_labels)
 	for key, value := range _labels {
 		//fmt.Printf("\nkey:%s\n", key)
 		//fmt.Printf("\nvalue:%s\n", value)
