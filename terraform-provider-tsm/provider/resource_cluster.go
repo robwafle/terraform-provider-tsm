@@ -217,7 +217,7 @@ func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 	labels := make([]tc.Label, len(_labels))
 
 	i := 0
-	//labelsLen := len(_labels)
+	labelsLen := len(_labels)
 	for key, value := range _labels {
 		//fmt.Printf("\nkey:%s\n", key)
 		//fmt.Printf("\nvalue:%s\n", value)
@@ -227,7 +227,8 @@ func MapClusterFromSchema(d *schema.ResourceData) (*tc.Cluster, error) {
 			Key:   key,
 			Value: value.(string),
 		}
-		labels[i] = label
+		//labels[i] = label
+		labels[labelsLen-i-1] = label
 		i = i + 1
 		//labels = append(labels, label)
 	}

@@ -4,7 +4,6 @@ type GlobalNamespaces struct {
 	IDs []string `json:"ids"`
 }
 
-// Cluster -
 type GlobalNamespace struct {
 	ID                  string           `json:"id,omitempty"`
 	Name                string           `json:"name"`
@@ -36,28 +35,30 @@ type ClusterMatchCondition struct {
 	Match string `json:"match"`
 }
 
-// {
-// 	"name": "string",
-// 	"display_name": "string",
-// 	"domain_name": "string",
-// 	"use_shared_gateway": true,
-// 	"mtls_enforced": true,
-// 	"ca_type": "PreExistingCA",
-// 	"ca": "string",
-// 	"description": "string",
-// 	"color": "string",
-// 	"version": "string",
-// 	"match_conditions": [
-// 	  {
-// 		"namespace": {
-// 		  "type": "string",
-// 		  "match": "string"
-// 		},
-// 		"cluster": {
-// 		  "type": "string",
-// 		  "match": "string"
-// 		}
-// 	  }
-// 	],
-// 	"api_discovery_enabled": true
-//   }
+/*
+{
+	"name": "string",
+	"display_name": "string",
+	"domain_name": "string",
+	"use_shared_gateway": true,
+	"mtls_enforced": true,
+	"ca_type": "PreExistingCA",
+	"ca": "string",
+	"description": "string",
+	"color": "string",
+	"version": "string",
+	"match_conditions": [
+	  {
+		"namespace": {
+		  "type": "string",
+		  "match": "string"
+		},
+		"cluster": {
+		  "type": "string",
+		  "match": "string"
+		}
+	  }
+	],
+	"api_discovery_enabled": true
+  }
+*/
