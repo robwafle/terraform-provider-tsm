@@ -1,4 +1,4 @@
-module "tanzu" {
-  for_each = var.tanzu
+module "tsm" {
+  for_each = var.tsm
   clusters = lookup(each.value, "clusters", null)
 }

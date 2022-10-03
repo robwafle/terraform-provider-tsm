@@ -1,5 +1,5 @@
 {
-    "name": "terraform-provider-tanzu",
+    "name": "terraform-provider-tsm",
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu", // Any generic, debian-based image.
     "features": {
         "ghcr.io/devcontainers/features/azure-cli:1": {
@@ -20,8 +20,8 @@
     },
     "remoteUser": "vscode",
     "remoteEnv": {
-		"TANZU_HOST": "${localEnv:TANZU_HOST}",
-		"TANZU_APIKEY": "${localEnv:TANZU_APIKEY}",
+		"TSM_HOST": "${localEnv:TSM_HOST}",
+		"TSM_APIKEY": "${localEnv:TSM_APIKEY}",
         "TF_VAR_appId": "${localEnv:TF_VAR_APPID}",
         "TF_VAR_password": "${localEnv:TF_VAR_PASSWORD}",
         "TF_VAR_tenantId": "${localEnv:TF_VAR_TENANTID}",

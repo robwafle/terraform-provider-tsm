@@ -1,4 +1,4 @@
-resource "tanzu_cluster" "cluster" {
+resource "tsm_cluster" "cluster" {
   for_each                          = var.clusters
   display_name                      = lookup(each.value, "display_name", null)
   description                       = lookup(each.value, "description", null)

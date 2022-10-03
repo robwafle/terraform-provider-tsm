@@ -1,0 +1,8 @@
+provider_installation {
+  dev_overrides {
+    "terraform.vmware.com/csc/tsm" = "/workspaces/terraform-provider-tsm/terraform-provider-tsm"
+  }
+  direct {
+    exclude = ["terraform.vmware.com/*/*"]
+  }
+}
