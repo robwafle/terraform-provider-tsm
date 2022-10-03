@@ -3,7 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
-	tc "terraform-provider-tanzu/plugin/client"
+	tc "terraform-provider-tsm/plugin/client"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -17,21 +17,21 @@ func Provider() *schema.Provider {
 			"host": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("TANZU_HOST", nil),
+				DefaultFunc: schema.EnvDefaultFunc("TSM_HOST", nil),
 			},
 			"apikey": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("TANZU_APIKEY", nil),
+				DefaultFunc: schema.EnvDefaultFunc("TSM_APIKEY", nil),
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"tanzu_cluster":         resourceCluster(),
-			"tanzu_globalnamespace": resourceGlobalNamespace(),
+			"tsm_cluster":         resourceCluster(),
+			"tsm_globalnamespace": resourceGlobalNamespace(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"tanzu_cluster":         dataSourceCluster(),
-			"tanzu_globalnamespace": dataSourceGlobalNamespace(),
+			"tsm_cluster":         dataSourceCluster(),
+			"tsm_globalnamespace": dataSourceGlobalNamespace(),
 		},
 		ConfigureContextFunc: providerConfigure,
 	}
@@ -46,7 +46,7 @@ func Provider() *schema.Provider {
 
 // 	// Authenticate to cluster using az aks get credentials.
 // 	// TODO: learn how to write config file given previous terraform step using client cert and certificate authority cert
-// 	// example: az aks get-credentials --name tanzu-two --resource-group tanzu-two-rg
+// 	// example: az aks get-credentials --name tsm-two --resource-group tsm-two-rg
 
 // 	rgHVal, rgOk := d.GetOk("resource_group")
 // 	if rgOk {
@@ -87,7 +87,7 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData) (interface{}
 
 	tflog.Debug(ctx, "Configuring Provider")
 
-	// authenticate to tanzu
+	// authenticate to tsm
 	apikeyVal, ok := d.GetOk("apikey")
 	if ok {
 		tempApiKey := apikeyVal.(string)

@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 
-	tanzu "terraform-provider-tanzu/plugin/provider"
+	tsm "terraform-provider-tsm/plugin/provider"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
@@ -18,14 +18,14 @@ func main() {
 	if debugMode {
 		err := plugin.Debug(context.Background(), "provider",
 			&plugin.ServeOpts{
-				ProviderFunc: tanzu.Provider,
+				ProviderFunc: tsm.Provider,
 			})
 		if err != nil {
 			//log.Println(err.Error())
 		}
 	} else {
 		plugin.Serve(&plugin.ServeOpts{
-			ProviderFunc: tanzu.Provider})
+			ProviderFunc: tsm.Provider})
 	}
 
 }

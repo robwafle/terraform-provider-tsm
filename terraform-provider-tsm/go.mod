@@ -1,4 +1,4 @@
-module terraform-provider-tanzu/plugin
+module terraform-provider-tsm/plugin
 
 go 1.19
 

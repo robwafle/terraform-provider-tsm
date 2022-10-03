@@ -17,7 +17,7 @@ func (c *Client) SignIn(ctx context.Context) (*AuthResponse, error) {
 	var resp *http.Response
 
 	if c.Auth.Apikey == "" {
-		return nil, fmt.Errorf("apikey missing from tanzu provider config")
+		return nil, fmt.Errorf("apikey missing from tsm provider config")
 	}
 	// rb, err := json.Marshal(c.Auth)
 	// if err != nil {

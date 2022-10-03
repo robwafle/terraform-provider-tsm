@@ -1,5 +1,5 @@
-resource "tanzu_globalnamespace" "default" {
-  depends_on = [tanzu_cluster.aks]
+resource "tsm_globalnamespace" "default" {
+  depends_on = [tsm_cluster.aks]
 
   name = "global-default"
   display_name = "global-default"
@@ -15,7 +15,7 @@ resource "tanzu_globalnamespace" "default" {
     
   match_condition {
     cluster_type = "EXACT"
-    cluster_match = tanzu_cluster.aks.display_name
+    cluster_match = tsm_cluster.aks.display_name
     namespace_type = "EXACT"
     namespace_match = "default"
   }

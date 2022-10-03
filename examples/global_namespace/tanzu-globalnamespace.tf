@@ -1,4 +1,4 @@
-resource "tanzu_globalnamespace" "default" {
+resource "tsm_globalnamespace" "default" {
 
   name = "global-default"
   display_name = "global-default"
@@ -27,6 +27,6 @@ resource "tanzu_globalnamespace" "default" {
   }
 }
 
-//data "tanzu_globalnamespace" "default" {
+//data "tsm_globalnamespace" "default" {
 //}
 

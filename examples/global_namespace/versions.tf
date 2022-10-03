@@ -1,8 +1,8 @@
 terraform {
   required_providers {
 
-    tanzu = {
-      source  = "terraform.vmware.com/csc/tanzu"
+    tsm = {
+      source  = "terraform.vmware.com/csc/tsm"
       version = "~> 0.0.1"
     }
 

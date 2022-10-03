@@ -2,7 +2,7 @@ package provider
 
 import (
 	"context"
-	tc "terraform-provider-tanzu/plugin/client"
+	tc "terraform-provider-tsm/plugin/client"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"

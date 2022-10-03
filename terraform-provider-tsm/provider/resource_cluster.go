@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	tc "terraform-provider-tanzu/plugin/client"
+	tc "terraform-provider-tsm/plugin/client"
 )
 
 func ResourceClusterSchema() map[string]*schema.Schema {

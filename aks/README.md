@@ -18,7 +18,7 @@ az aks create -g aks-one-rg -n aks-one --enable-managed-identity --node-count 3 
 az group create --name aks-one-arc --location EastUS --output table
 
 # get the creds so we can connect the cluster
-az aks get-credentials --name tanzu-two --resource-group tanzu-two-rg
+az aks get-credentials --name tsm-two --resource-group tsm-two-rg
 
 # connect the cluster
 az connectedk8s connect --name aks-one --resource-group aks-one-arc

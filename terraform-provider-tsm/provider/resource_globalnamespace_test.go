@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	tc "terraform-provider-tanzu/plugin/client"
-	tp "terraform-provider-tanzu/plugin/provider"
+	tc "terraform-provider-tsm/plugin/client"
+	tp "terraform-provider-tsm/plugin/provider"
 
 	"github.com/go-test/deep"
 

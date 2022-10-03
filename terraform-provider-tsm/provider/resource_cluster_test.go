@@ -3,8 +3,8 @@ package provider_test
 import (
 	"testing"
 
-	tc "terraform-provider-tanzu/plugin/client"
-	tp "terraform-provider-tanzu/plugin/provider"
+	tc "terraform-provider-tsm/plugin/client"
+	tp "terraform-provider-tsm/plugin/provider"
 
 	"encoding/json"
 

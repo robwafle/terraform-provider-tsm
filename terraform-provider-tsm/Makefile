@@ -1,7 +1,7 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
 HOSTNAME=terraform.vmware.com
 NAMESPACE=csc
-NAME=tanzu
+NAME=tsm
 BINARY=terraform-provider-${NAME}
 VERSION=0.0.74
 OS_ARCH=linux_amd64

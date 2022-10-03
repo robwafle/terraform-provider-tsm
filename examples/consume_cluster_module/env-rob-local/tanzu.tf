@@ -29,9 +29,9 @@ locals {
     }
 }
 
-module "tanzu" {
+module "tsm" {
     providers = {
-        tanzu
+        tsm
     }
-    for_each = local.tanzu
+    for_each = local.tsm
 }

@@ -1,1 +1,1 @@
-kind create cluster --name tanzu-one --config kind-config.yaml
+kind create cluster --name tsm-one --config kind-config.yaml

@@ -1,12 +1,12 @@
 # env vars to set on your local system BEFORE opening visual studio.:
 ```
-TANZU_HOST: https://prod-<number>.nsxservicemesh.vmware.com
-TANZU_APIKEY: <its-a-secret>
+TSM_HOST: https://prod-<number>.nsxservicemesh.vmware.com
+TSM_APIKEY: <its-a-secret>
 ```
 
 # command to rebuild, install and test
 ```
-pushd ../../terraform-provider-tanzu ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
+pushd ../../terraform-provider-tsm ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
 ```
 
 # clean up if it all goes wrong
@@ -50,3 +50,4 @@ kubectl run netshoot --rm -i --tty --image nicolaka/netshoot
 ```
  kubectl run netshoot --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}' --image nicolaka/netshoot
 ```
+

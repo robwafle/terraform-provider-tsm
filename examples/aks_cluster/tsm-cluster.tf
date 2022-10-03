@@ -1,6 +1,6 @@
 
 
-resource "tanzu_cluster" "aks" {
+resource "tsm_cluster" "aks" {
   depends_on = [null_resource.kubectl]
   display_name = azurerm_kubernetes_cluster.k8s.name
   //cluster_name =  azurerm_kubernetes_cluster.k8s.name
@@ -37,18 +37,18 @@ resource "tanzu_cluster" "aks" {
 
 
 
-# # data "tanzu_cluster" "stage_cluster" {
+# # data "tsm_cluster" "stage_cluster" {
 # #   id = "stage"
 # # }
 
 # # output "stage_cluster" {
-# #   value = data.tanzu_cluster.stage_cluster
+# #   value = data.tsm_cluster.stage_cluster
 # # }
 
-# # data "tanzu_cluster" "roblocal_cluster" {
+# # data "tsm_cluster" "roblocal_cluster" {
 # #   id = "rob-local"
 # # }
 
 # # output "roblocal_cluster" {
-# #   value = data.tanzu_cluster.roblocal_cluster
+# #   value = data.tsm_cluster.roblocal_cluster
 # # }

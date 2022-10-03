@@ -1,14 +1,14 @@
 terraform {
   required_providers {
-    tanzu = {
-      source  = "terraform.vmware.com/csc/tanzu"
+    tsm = {
+      source  = "terraform.vmware.com/csc/tsm"
       version = "0.0.1"
     }
   }
 }
 
-# NOTE: Values are read from the environment variables: TANZU_HOST, TANZU_APIKEY
-provider "tanzu" {
+# NOTE: Values are read from the environment variables: TSM_HOST, TSM_APIKEY
+provider "tsm" {
   //host = "https://prod-4.nsxservicemesh.vmware.com"
   //apikey = ""
 }
