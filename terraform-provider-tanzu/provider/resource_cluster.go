@@ -130,6 +130,7 @@ func resourceClusterCreate(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(execOnboardCmdErr)
 	}
 
+	clusterToCreate.ID = ""
 	cl, err := c.CreateCluster(ctx, *clusterToCreate, nil)
 	if err != nil {
 		return diag.FromErr(err)
