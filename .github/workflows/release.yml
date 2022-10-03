@@ -16,6 +16,9 @@ on:
       - 'v*'
 permissions:
   contents: write
+defaults:
+ run:
+  working-directory: ./terraform-provider-tsm
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
