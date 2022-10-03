@@ -39,3 +39,8 @@ $ terraform init -plugin-dir=~/.terraform.d
 $ terraform init && terraform apply
 ```
 
+# Unit testing
+In vscode, you can right click and choose "Go: Test Function At Cursor" or run the tests manually.
+```
+go test terraform-provider-tanzu/plugin/provider -v
+```
