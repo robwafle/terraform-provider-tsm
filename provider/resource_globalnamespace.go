@@ -24,7 +24,7 @@ func resourceGlobalNamespace() *schema.Resource {
 		Schema: ResourceGlobalNamespaceSchema(),
 	}
 }
-
+gpg --full-generate-key
 func ResourceGlobalNamespaceSchema() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"id": {
