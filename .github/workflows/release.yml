@@ -19,9 +19,6 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-       working-directory: web
     steps:
       -
         name: Checkout
@@ -33,7 +30,7 @@ jobs:
         name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version-file: 'go.mod'
+          go-version-file: ./terraform-provider-tsm/go.mod
           cache: true
       -
         name: Import GPG key
@@ -48,6 +45,7 @@ jobs:
         with:
           version: latest
           args: release --rm-dist
+          workdir: ./terraform-provider-tsm
         env:
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
           # GitHub sets this automatically
