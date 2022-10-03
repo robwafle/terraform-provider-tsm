@@ -19,6 +19,9 @@ permissions:
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+       working-directory: web
     steps:
       -
         name: Checkout
@@ -30,7 +33,7 @@ jobs:
         name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version-file: './terraform-provider-tsm/go.mod'
+          go-version-file: 'go.mod'
           cache: true
       -
         name: Import GPG key
