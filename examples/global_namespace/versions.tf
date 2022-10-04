@@ -2,7 +2,7 @@ terraform {
   required_providers {
 
     tsm = {
-      source  = "terraform.vmware.com/csc/tsm"
+      source  = "robwafle/tsm"
       version = "~> 0.0.1"
     }
 
