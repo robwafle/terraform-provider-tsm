@@ -29,7 +29,7 @@ description: |-
 
 ### Optional
 
-- `color` (String)
+- `color` (String) test description
 - `description` (String)
 - `last_updated` (String)
 - `match_condition` (Block Set) (see [below for nested schema](#nestedblock--match_condition))

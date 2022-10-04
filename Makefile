@@ -1,9 +1,9 @@
 TEST?=$$(go list ./... | grep -v 'vendor')
-HOSTNAME=terraform.vmware.com
-NAMESPACE=csc
+HOSTNAME=registry.terraform.io
+NAMESPACE=robwafle
 NAME=tsm
 BINARY=terraform-provider-${NAME}
-VERSION=0.0.75
+VERSION=0.0.77
 OS_ARCH=linux_amd64
 
 default: install

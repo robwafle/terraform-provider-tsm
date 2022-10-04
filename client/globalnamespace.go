@@ -59,9 +59,11 @@ func (c *Client) GetGlobalNamespace(ctx context.Context, id string) (*GlobalName
 
 // CreateGlobalNamespace - Create new GlobalNamespace
 func (c *Client) CreateUpdateGlobalNamespace(ctx context.Context, globalNamespace GlobalNamespace, authToken *string) (*GlobalNamespace, error) {
-	putUrl := fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces/%s", c.HostURL, globalNamespace.Name)
+	putUrl := fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces/%s", c.HostURL, globalNamespace.ID)
 
 	// set this to nil, because we're not supposed to send it to the PUT
+	globalNamespace.ID = ""
+
 	GlobalNamespaceJSON, err := json.Marshal(globalNamespace)
 	if err != nil {
 		return nil, err

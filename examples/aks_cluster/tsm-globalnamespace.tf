@@ -9,7 +9,7 @@ resource "tsm_globalnamespace" "default" {
   api_discovery_enabled = true
   ca_type = "PreExistingCA"
   ca = "default"
-  description = "created via terraform"
+  description = "created via terraform test update"
   color = "#00FF00"
   version = "2.0"
     

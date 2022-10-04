@@ -14,7 +14,7 @@ resource "tsm_cluster" "aks" {
   labels = {
     L1 = "value one"
     L2 = "value two"
-    //L3 = "value three"
+    L3 = "value three"
     L4 = "value four"
   }
 

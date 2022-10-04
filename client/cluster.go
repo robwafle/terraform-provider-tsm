@@ -109,7 +109,8 @@ func (c *Client) UpdateCluster(ctx context.Context, cluster Cluster, authToken *
 	tflog.Trace(ctx, "Updating Cluster ...")
 	putUrl := fmt.Sprintf("%s/tsm/v1alpha1/clusters/%s?createOnly=false", c.HostURL, cluster.DisplayName)
 
-	// set this to nil, because we're not supposed to send it to the PUT
+	// set this to nil, because we're not supposed to send it to the PUT	// set this to nil, because we're not supposed to send it to the PUT
+	cluster.ID = ""
 	clusterJSON, err := json.Marshal(cluster)
 	if err != nil {
 		return nil, err
