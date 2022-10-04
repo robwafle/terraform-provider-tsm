@@ -69,8 +69,9 @@ func ResourceGlobalNamespaceSchema() map[string]*schema.Schema {
 			Optional: true,
 		},
 		"color": {
-			Type:     schema.TypeString,
-			Optional: true,
+			Type:        schema.TypeString,
+			Optional:    true,
+			Description: "test description",
 		},
 		"version": {
 			Type:     schema.TypeString,

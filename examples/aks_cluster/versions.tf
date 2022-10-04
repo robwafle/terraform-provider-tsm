@@ -5,7 +5,7 @@ terraform {
       version = "2.66.0"
     }
     tsm = {
-      source  = "terraform.vmware.com/csc/tsm"
+      source  = "robwafle/tsm"
       version = "~> 0.0.1"
     }
     # cloudflare = {
@@ -21,7 +21,6 @@ terraform {
     #   version = "=2.8.0"
     # }
   }
-
   required_version = ">= 0.14"
 }
 
