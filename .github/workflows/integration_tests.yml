@@ -18,7 +18,7 @@ on:
 permissions:
   contents: write
 jobs:
-  goreleaser:
+  integration-tests:
     runs-on: ubuntu-latest
     steps:
       -
