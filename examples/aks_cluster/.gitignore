@@ -37,3 +37,4 @@ tfplan
 tfplan.txt
 .terraform.lock.hcl
 secrets
+azclisecrets
