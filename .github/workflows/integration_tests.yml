@@ -48,9 +48,12 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache: true
+          working-directory: ./
       - 
         name: Build
         run: make build
+        with:
+          working-directory: ./
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
