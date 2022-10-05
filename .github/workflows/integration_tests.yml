@@ -51,13 +51,20 @@ jobs:
       - 
         name: Azure Version
         run: az version
+      - 
+        name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az account show
+            az storage -h
       -
         name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version-file: 'go.mod'
           cache: true
-          working-directory: ./
       - 
         name: Build
         run: make build
