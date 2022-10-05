@@ -52,8 +52,7 @@ jobs:
       - 
         name: Build
         run: make build
-        with:
-          working-directory: ./
+        working-directory: ./
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
