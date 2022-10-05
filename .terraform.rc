@@ -1,0 +1,6 @@
+provider_installation  {
+  dev_overrides  {
+   "robwafle/tsm" = "/workspaces/terraform-provider-tsm/bin"
+  }
+  direct {}
+}
