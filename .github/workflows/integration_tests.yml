@@ -20,6 +20,9 @@ permissions:
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./examples/aks_cluster
     env:
       #NOTE: Case matters for the name of these TF_VAR_ environment variables.
       TF_VAR_appId: ${{ secrets.TF_VAR_APPID }}
