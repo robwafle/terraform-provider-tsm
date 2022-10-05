@@ -3,7 +3,7 @@ HOSTNAME=registry.terraform.io
 NAMESPACE=robwafle
 NAME=tsm
 BINARY=terraform-provider-${NAME}
-VERSION=0.0.78
+VERSION=0.0.79
 OS_ARCH=linux_amd64
 
 default: install
@@ -15,7 +15,7 @@ release:
 
 install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
-	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	cp bin/${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 
 test:
 	go test -i $(TEST) || exit 1

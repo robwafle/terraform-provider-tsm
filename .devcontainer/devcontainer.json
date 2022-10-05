@@ -25,6 +25,7 @@
         "TF_VAR_appId": "${localEnv:TF_VAR_APPID}",
         "TF_VAR_password": "${localEnv:TF_VAR_PASSWORD}",
         "TF_VAR_tenantId": "${localEnv:TF_VAR_TENANTID}",
+        "TF_VAR_subscriptionId": "${localEnv:TF_VAR_SUBSCRIPTIONID}",
         "HOST_VAR":"/host/var"
 	}
 }

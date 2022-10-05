@@ -1,5 +1,12 @@
+
+
 provider "azurerm" {
   features {}
+
+  subscription_id = var.subscriptionId
+  client_id       = var.appId
+  client_secret   = var.password
+  tenant_id       = var.tenantId
 }
 
 resource "azurerm_resource_group" "default" {
