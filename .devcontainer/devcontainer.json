@@ -26,6 +26,10 @@
         "TF_VAR_password": "${localEnv:TF_VAR_PASSWORD}",
         "TF_VAR_tenantId": "${localEnv:TF_VAR_TENANTID}",
         "TF_VAR_subscriptionId": "${localEnv:TF_VAR_SUBSCRIPTIONID}",
+        "ARM_CLIENT_ID": "${localEnv:TF_VAR_APPID}",
+        "ARM_CLIENT_SECRET": "${localEnv:TF_VAR_PASSWORD}",
+        "ARM_TENANT_ID": "${localEnv:TF_VAR_TENANTID}",
+        "ARM_SUBSCRIPTION_ID": "${localEnv:TF_VAR_SUBSCRIPTIONID}",
         "HOST_VAR":"/host/var"
 	}
 }

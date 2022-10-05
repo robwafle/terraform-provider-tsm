@@ -31,6 +31,10 @@ jobs:
       TF_VAR_tenantId: ${{ secrets.TF_VAR_TENANTID}}
       TSM_APIKEY: ${{ secrets.TSM_APIKEY }}
       TSM_HOST: ${{ secrets.TSM_HOST }}
+      ARM_CLIENT_ID: ${{ secrets.TF_VAR_APPID }}
+      ARM_CLIENT_SECRET: ${{ secrets.TF_VAR_PASSWORD }}
+      ARM_TENANT_ID: ${{ secrets.TF_VAR_TENANTID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
 
     steps:
       -
