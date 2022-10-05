@@ -48,6 +48,9 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - 
+        name: Azure Version
+        run: az version
       -
         name: Set up Go
         uses: actions/setup-go@v3
