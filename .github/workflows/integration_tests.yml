@@ -20,6 +20,13 @@ permissions:
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
+    env:
+      #NOTE: Case matters for the name of these TF_VAR_ environment variables.
+      TF_VAR_appId: ${{ secrets.TF_VAR_APPID }}
+      TF_VAR_password: ${{ secrets.TF_VAR_PASSWORD }}
+      TSM_APIKEY: ${{ secrets.TSM_APIKEY }}
+      TSM_HOST: ${{ secrets.TSM_HOST }}
+
     steps:
       -
         name: Checkout
@@ -27,6 +34,11 @@ jobs:
       -
         name: Unshallow
         run: git fetch --prune --unshallow
+      - 
+        name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       -
         name: Set up Go
         uses: actions/setup-go@v3
@@ -41,3 +53,25 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.3.1
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        #if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
