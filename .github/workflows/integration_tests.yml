@@ -36,3 +36,8 @@ jobs:
       - 
         name: Build
         run: make build
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.13.1
