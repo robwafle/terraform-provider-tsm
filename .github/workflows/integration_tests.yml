@@ -64,7 +64,8 @@ jobs:
 
       - name: Delete Resource Group in case it was somehow left behind.
         if: always()
-        run: az group delete --name aks-int-rg --yes; az group wait --deleted --resource-group aks-int-rg 
+        run: az group delete --name aks-int-rg --yes; az group wait --deleted --resource-group aks-int-rg
+        continue-on-error: true
       - 
         name: Azure Version
         run: az version
@@ -121,4 +122,5 @@ jobs:
       - name: Delete Resource Group to save $$ in case something fails.
         if: always()
         run: az group delete --name aks-int-rg --yes  #no need to wait here, would rather this report back sooner.
+        continue-on-error: true
 
