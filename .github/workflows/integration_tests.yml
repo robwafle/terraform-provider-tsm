@@ -116,6 +116,10 @@ jobs:
           sed -i 's/created via terraform/created via terraform updated/g' tsm-cluster.tf
           sed -i 's/created via terraform/created via terraform updated/g' tsm-globalnamespace.tf
 
+      - name: Terraform Validate Updates
+        id: validate_updates
+        run: terraform validate -no-color
+
       - name: Terraform Plan Updates
         id: plan_updates
         #if: github.event_name == 'pull_request'
