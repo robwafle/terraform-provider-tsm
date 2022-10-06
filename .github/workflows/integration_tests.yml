@@ -19,7 +19,9 @@ permissions:
   contents: write
 jobs:
   integration-tests:
-    concurrency: integration-tests
+    concurrency: 
+      group: integration-tests
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     defaults:
       run:
