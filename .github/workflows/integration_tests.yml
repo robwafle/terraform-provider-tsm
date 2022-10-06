@@ -67,17 +67,6 @@ jobs:
         if: always()
         run: az group delete --name tsm-one-rg --yes; az group wait --deleted --resource-group tsm-one-rg
         continue-on-error: true
-      - 
-        name: Azure Version
-        run: az version
-      - 
-        name: Azure CLI script
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.40.0
-          inlineScript: |
-            az account show
-            az storage -h
       -
         name: Set up Go
         uses: actions/setup-go@v3
@@ -127,7 +116,6 @@ jobs:
           sed -i 's/created via terraform/created via terraform updated/g' tsm-cluster.tf
           sed -i 's/created via terraform/created via terraform updated/g' tsm-globalnamespace.tf
 
-
       - name: Terraform Plan Updates
         id: plan_updates
         #if: github.event_name == 'pull_request'
@@ -149,6 +137,7 @@ jobs:
         run: sleep 30m
 
       - name: Terraform Destroy
+        if: always()
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
