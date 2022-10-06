@@ -47,12 +47,15 @@ jobs:
       -
         name: Unshallow
         run: git fetch --prune --unshallow
-      - name: Wait For Other Pipelines
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: otto-de/github-actions-wait@v1.0
+
+      - name: Wait on previous workflow run
+        uses: ./
         with:
-          step-name: "Wait For Other Pipelines"
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10 # seconds
+          running-workflow-name: integration-tests
+          check-name: wait-on-me
       -
         name: Azure Login
         uses: azure/login@v1
