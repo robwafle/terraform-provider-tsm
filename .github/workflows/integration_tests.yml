@@ -19,9 +19,9 @@ permissions:
   contents: write
 jobs:
   integration-tests:
-    concurrency: 
-      group: integration-tests
-      cancel-in-progress: false
+    #concurrency: 
+    #  group: integration-tests
+    #  cancel-in-progress: false
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -41,7 +41,13 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
 
     steps:
-      - 
+      - name: Wait For Other Pipelines
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: otto-de/github-actions-wait@v1.0
+        with:
+          step-name: "Wait For Other Pipelines"
+      -
         name: Azure Login
         uses: azure/login@v1
         with:
