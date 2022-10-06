@@ -84,6 +84,11 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - 
+        name: Setup Kubectl
+        uses: azure/setup-kubectl@v3
+        id: install
+        
+      - 
         name: Build
         run: make build
         working-directory: ./
