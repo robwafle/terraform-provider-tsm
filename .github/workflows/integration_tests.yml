@@ -139,7 +139,7 @@ jobs:
       - name: Terraform Destroy
         if: always()
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+        run: terraform destroy -force
 
       - name: Delete Resource Group to save $$ in case something fails.
         if: always()
