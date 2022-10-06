@@ -18,11 +18,19 @@ on:
 permissions:
   contents: write
 jobs:
+  consecutiveness:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mktcode/consecutive-workflow-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
   integration-tests:
     #concurrency: 
     #  group: integration-tests
     #  cancel-in-progress: false
     runs-on: ubuntu-latest
+    needs: [ consecutiveness ]
     defaults:
       run:
         working-directory: ./examples/aks_cluster
@@ -47,14 +55,6 @@ jobs:
       -
         name: Unshallow
         run: git fetch --prune --unshallow
-
-      - name: Wait for build to succeed
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: wait-for-build
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: integration-tests
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       -
         name: Azure Login
