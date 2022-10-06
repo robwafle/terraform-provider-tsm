@@ -41,7 +41,7 @@ jobs:
     steps:
       - name: Delete Resource Group in case it was somehow left behind.
         if: always()
-        run: az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes --wait
+        run: "az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes --wait"
       -
         name: Checkout
         uses: actions/checkout@v3
@@ -108,5 +108,5 @@ jobs:
 
       - name: Delete Resource Group to save $$ in case something fails.
         if: always()
-        run: az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes
+        run: "az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes"
 
