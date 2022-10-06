@@ -41,6 +41,12 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
 
     steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Unshallow
+        run: git fetch --prune --unshallow
       - name: Wait For Other Pipelines
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,12 +62,6 @@ jobs:
       - name: Delete Resource Group in case it was somehow left behind.
         if: always()
         run: az group delete --name aks-int-rg --yes --wait
-      -
-        name: Checkout
-        uses: actions/checkout@v3
-      -
-        name: Unshallow
-        run: git fetch --prune --unshallow
       - 
         name: Azure Version
         run: az version
