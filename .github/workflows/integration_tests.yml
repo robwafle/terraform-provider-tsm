@@ -109,5 +109,5 @@ jobs:
 
       - name: Delete Resource Group to save $$ in case something fails.
         if: always()
-        run: az group delete --name aks-int-rg --yes
+        run: az group delete --name aks-int-rg --yes  #no need to wait here, would rather this report back sooner.
 
