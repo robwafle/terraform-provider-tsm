@@ -50,3 +50,8 @@ In vscode, you can right click and choose "Go: Test Function At Cursor" or run t
 ```
 go test terraform-provider-tsm/plugin/provider -v
 ```
+
+# Publish a version
+```
+git tag v0.0.80; git push origin v0.0.80 --force
+```
