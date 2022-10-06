@@ -123,7 +123,7 @@ jobs:
 
 
       - name: Terraform Plan Updates
-        id: plan
+        id: plan_updates
         #if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
         continue-on-error: true
