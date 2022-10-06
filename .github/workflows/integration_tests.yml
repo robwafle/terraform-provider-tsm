@@ -100,3 +100,8 @@ jobs:
       - name: Terraform Destroy
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+
+      - name: Delete Resource Group to save $$ in case something fails.
+        if: always()
+        run: az group delete --name tsm-one-rg --yes
+
