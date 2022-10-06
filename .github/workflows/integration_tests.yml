@@ -151,3 +151,5 @@ jobs:
         run: az group delete --name tsm-one-rg --yes  #no need to wait here, would rather this report back sooner.
         continue-on-error: true
 
+        ##TODO, clean up tsm resources in case terraform destroy fails?
+
