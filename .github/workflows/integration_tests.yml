@@ -104,5 +104,5 @@ jobs:
 
       - name: Delete Resource Group to save $$ in case something fails.
         if: always()
-        run: az group delete --name ${{env.TF_VAR_clusterPrefix}} --yes
+        run: az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes
 
