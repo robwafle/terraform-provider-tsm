@@ -55,7 +55,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
           running-workflow-name: integration-tests
-          check-name: wait-on-me
+          check-name: integration-tests
       -
         name: Azure Login
         uses: azure/login@v1
