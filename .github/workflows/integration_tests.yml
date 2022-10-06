@@ -19,6 +19,7 @@ permissions:
   contents: write
 jobs:
   integration-tests:
+    concurrency: integration-tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,7 +30,7 @@ jobs:
       TF_VAR_password: ${{ secrets.TF_VAR_PASSWORD }}
       TF_VAR_subscriptionId: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
       TF_VAR_tenantId: ${{ secrets.TF_VAR_TENANTID}}
-      TF_VAR_clusterPrefix: "aks-int-${{github.run_number}}"
+      TF_VAR_clusterPrefix: "aks-int"
       TSM_APIKEY: ${{ secrets.TSM_APIKEY }}
       TSM_HOST: ${{ secrets.TSM_HOST }}
       ARM_CLIENT_ID: ${{ secrets.TF_VAR_APPID }}
@@ -38,6 +39,9 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
 
     steps:
+      - name: Delete Resource Group in case it was somehow left behind.
+        if: always()
+        run: az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes --wait
       -
         name: Checkout
         uses: actions/checkout@v3
