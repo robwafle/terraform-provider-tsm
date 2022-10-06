@@ -3,7 +3,7 @@ HOSTNAME=registry.terraform.io
 NAMESPACE=robwafle
 NAME=tsm
 BINARY=terraform-provider-${NAME}
-VERSION=0.0.79
+VERSION=0.0.80
 OS_ARCH=linux_amd64
 
 default: install

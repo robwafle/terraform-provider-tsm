@@ -115,6 +115,27 @@ jobs:
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
+      - name: Replace some strings to test update.
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          sed -i 's/created via terraform/created via terraform updated/g' tsm-cluster.tf
+          sed -i 's/created via terraform/created via terraform updated/g' tsm-globalnamespace.tf
+
+
+      - name: Terraform Plan Updates
+        id: plan
+        #if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Terraform Plan Updates Status 
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+        
+      - name: Terraform Apply Updates
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+
       - name: Terraform Destroy
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
