@@ -39,6 +39,12 @@ jobs:
       ARM_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
 
     steps:
+      - 
+        name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Delete Resource Group in case it was somehow left behind.
         if: always()
         run: "az group delete --name ${{env.TF_VAR_clusterPrefix}}-rg --yes --wait"
@@ -48,11 +54,6 @@ jobs:
       -
         name: Unshallow
         run: git fetch --prune --unshallow
-      - 
-        name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - 
         name: Azure Version
         run: az version
