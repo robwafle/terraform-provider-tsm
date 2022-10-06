@@ -48,14 +48,12 @@ jobs:
         name: Unshallow
         run: git fetch --prune --unshallow
 
-      - name: Wait on previous workflow run
-        uses: ./
+      - 
+        name: Wait for workflow
+        uses: ArcticLampyrid/action-wait-for-workflow@v1.0.2
         with:
-          ref: ${{ github.sha }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10 # seconds
-          running-workflow-name: integration-tests
-          check-name: integration-tests
+          workflow: integration-tests
+
       -
         name: Azure Login
         uses: azure/login@v1
