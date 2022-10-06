@@ -48,11 +48,13 @@ jobs:
         name: Unshallow
         run: git fetch --prune --unshallow
 
-      - 
-        name: Wait for workflow
-        uses: ArcticLampyrid/action-wait-for-workflow@v1.0.2
+      - name: Wait for build to succeed
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        id: wait-for-build
         with:
-          workflow: integration-tests
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: integration-tests
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       -
         name: Azure Login
