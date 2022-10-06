@@ -41,7 +41,7 @@ jobs:
       TF_VAR_subscriptionId: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
       TF_VAR_tenantId: ${{ secrets.TF_VAR_TENANTID}}
       TF_VAR_clusterPrefix: "tsm-one"
-      TF_LOG: TRACE
+      #TF_LOG: TRACE
       TSM_APIKEY: ${{ secrets.TSM_APIKEY }}
       TSM_HOST: ${{ secrets.TSM_HOST }}
       ARM_CLIENT_ID: ${{ secrets.TF_VAR_APPID }}
