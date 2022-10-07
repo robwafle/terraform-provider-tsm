@@ -1,5 +1,12 @@
+
+# this provider is here so someone can easily delete this file and remove the provider as well
 provider "azurerm" {
   features {}
+
+  # subscription_id = var.subscriptionId
+  # client_id       = var.appId
+  # client_secret   = var.password
+  # tenant_id       = var.tenantId
 }
 
 resource "azurerm_resource_group" "default" {

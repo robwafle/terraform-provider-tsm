@@ -1,0 +1,154 @@
+# This GitHub action can publish assets for release when a tag is created.
+# Currently its setup to run on any tag that matches the pattern "v*" (ie. v0.1.0).
+#
+# This uses an action (hashicorp/ghaction-import-gpg) that assumes you set your 
+# private key in the `GPG_PRIVATE_KEY` secret and passphrase in the `PASSPHRASE`
+# secret. If you would rather own your own GPG handling, please fork this action
+# or use an alternative one for key handling.
+#
+# You will need to pass the `--batch` flag to `gpg` in your signing step 
+# in `goreleaser` to indicate this is being used in a non-interactive mode.
+#
+name: integration-tests
+on:
+  #TODO: switch to building on PR after confirming this works
+  push:
+    branches:
+      - 'feature/*'
+permissions:
+  contents: write
+jobs:
+  consecutiveness:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: mktcode/consecutive-workflow-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  integration-tests:
+    #concurrency: 
+    #  group: integration-tests
+    #  cancel-in-progress: false
+    runs-on: ubuntu-latest
+    needs: [ consecutiveness ]
+    defaults:
+      run:
+        working-directory: ./examples/aks_cluster
+    env:
+      #NOTE: Case matters for the name of these TF_VAR_ environment variables.
+      TF_VAR_appId: ${{ secrets.TF_VAR_APPID }}
+      TF_VAR_password: ${{ secrets.TF_VAR_PASSWORD }}
+      TF_VAR_subscriptionId: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
+      TF_VAR_tenantId: ${{ secrets.TF_VAR_TENANTID}}
+      TF_VAR_clusterPrefix: "tsm-one"
+      #TF_LOG: TRACE
+      TSM_APIKEY: ${{ secrets.TSM_APIKEY }}
+      TSM_HOST: ${{ secrets.TSM_HOST }}
+      ARM_CLIENT_ID: ${{ secrets.TF_VAR_APPID }}
+      ARM_CLIENT_SECRET: ${{ secrets.TF_VAR_PASSWORD }}
+      ARM_TENANT_ID: ${{ secrets.TF_VAR_TENANTID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.TF_VAR_SUBSCRIPTIONID }}
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Unshallow
+        run: git fetch --prune --unshallow
+
+      -
+        name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Delete Resource Group in case it was somehow left behind.
+        if: always()
+        run: az group delete --name tsm-one-rg --yes; az group wait --deleted --resource-group tsm-one-rg
+        continue-on-error: true
+      -
+        name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - 
+        name: Setup Kubectl
+        uses: azure/setup-kubectl@v3
+        id: install
+        
+      - 
+        name: Build
+        run: make build
+        working-directory: ./
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.3.1
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        #if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+
+      - name: Replace some strings to test update.
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          sed -i 's/created via terraform/created via terraform updated/g' tsm-cluster.tf
+          sed -i 's/created via terraform/created via terraform updated/g' tsm-globalnamespace.tf
+
+      - name: Terraform Validate Updates
+        id: validate_updates
+        run: terraform validate -no-color
+
+      - name: Terraform Plan Updates
+        id: plan_updates
+        #if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - name: Terraform Plan Updates Status 
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+        
+      - name: Terraform Apply Updates
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+
+        #need to wait till cluster is completely online in TSM.. need to figure out what api call to use
+        #this will likely be implemented in terraform
+      - name: Sleep 30 min
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: sleep 30m
+
+      - name: Terraform Destroy
+        if: always()
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform destroy -auto-approve
+
+      - name: Delete Resource Group to save $$ in case something fails.
+        if: always()
+        run: az group delete --name tsm-one-rg --yes  #no need to wait here, would rather this report back sooner.
+        continue-on-error: true
+
+        ##TODO, clean up tsm resources in case terraform destroy fails?
+

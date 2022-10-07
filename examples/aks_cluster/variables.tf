@@ -8,6 +8,8 @@ variable "password" {
 
 variable "tenantId" {}
 
+variable "subscriptionId" {}
+
 variable "clusterPrefix" {
   default = "tsm-one"
 }

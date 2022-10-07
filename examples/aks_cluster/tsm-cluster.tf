@@ -23,32 +23,4 @@ resource "tsm_cluster" "aks" {
   #   type = "EXACT"
   # }
 
-  #  namespace_exclusion {
-  #    match = "bob"
-  #    type = "EXACT"
-  #  }
-
-  #  namespace_exclusion {
-  #    match = "three"
-  #    type = "EXACT"
-  #  }
 }
-
-
-
-
-# # data "tsm_cluster" "stage_cluster" {
-# #   id = "stage"
-# # }
-
-# # output "stage_cluster" {
-# #   value = data.tsm_cluster.stage_cluster
-# # }
-
-# # data "tsm_cluster" "roblocal_cluster" {
-# #   id = "rob-local"
-# # }
-
-# # output "roblocal_cluster" {
-# #   value = data.tsm_cluster.roblocal_cluster
-# # }
