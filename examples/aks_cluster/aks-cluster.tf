@@ -46,7 +46,7 @@ resource "azurerm_kubernetes_cluster" "k8s" {
 }
 
 data "azurerm_kubernetes_cluster" "k8s" {
-  depends_on = [azurerm_kubernetes_cluster.k8s]
+  depends_on          = [azurerm_kubernetes_cluster.k8s]
   name                = azurerm_kubernetes_cluster.k8s.name
   resource_group_name = azurerm_resource_group.default.name
 }
