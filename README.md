@@ -55,3 +55,7 @@ go test terraform-provider-tsm/plugin/provider -v
 ```
 git tag v0.0.80; git push origin v0.0.80 --force
 ```
+
+# use the .terraform.rc development overrides:
+cp ./.terraform.rc $HOME/.terraform.rc
+export TF_CLI_CONFIG_FILE="$HOME/.terraform.rc"
