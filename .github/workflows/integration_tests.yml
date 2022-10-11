@@ -42,7 +42,7 @@ jobs:
       TF_VAR_tenantId: ${{ secrets.TF_VAR_TENANTID}}
       TF_VAR_clusterPrefix: "tsm-one"
       TF_LOG: TRACE
-      TF_CLI_CONFIG_FILE: "../../terraform.rc"
+      TF_CLI_CONFIG_FILE: "../../.terraform.rc"
       TSM_APIKEY: ${{ secrets.TSM_APIKEY }}
       TSM_HOST: ${{ secrets.TSM_HOST }}
       ARM_CLIENT_ID: ${{ secrets.TF_VAR_APPID }}
