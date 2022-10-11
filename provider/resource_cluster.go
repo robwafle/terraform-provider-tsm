@@ -273,46 +273,45 @@ func resourceClusterRead(ctx context.Context, d *schema.ResourceData, m interfac
 	clusterID := d.Id()
 
 	cl, err := c.GetCluster(ctx, clusterID)
-	if err != nil {
+	if err != nil && err.Error() != "404" {
 		return diag.FromErr(err)
 	}
+	if cl != nil {
+		tflog.Trace(ctx, "Setting Root Level Fields ... ")
+		d.Set("id", cl.ID)
+		d.Set("display_name", cl.DisplayName)
+		d.Set("token", cl.Token)
+		d.Set("auto_install_servicemesh", cl.AutoInstallServiceMesh)
+		d.Set("description", cl.Description)
+		d.Set("enable_namespace_exclusions", cl.EnableNamespaceExclusions)
 
-	tflog.Trace(ctx, "Setting Root Level Fields ... ")
-	d.Set("id", cl.ID)
-	d.Set("display_name", cl.DisplayName)
-	d.Set("token", cl.Token)
-	d.Set("auto_install_servicemesh", cl.AutoInstallServiceMesh)
-	d.Set("description", cl.Description)
-	d.Set("enable_namespace_exclusions", cl.EnableNamespaceExclusions)
+		// Set labels
+		tflog.Trace(ctx, "Setting Labels ... ")
+		labels := make(map[string]interface{})
 
-	// Set labels
-	tflog.Trace(ctx, "Setting Labels ... ")
-	labels := make(map[string]interface{})
+		for _, l := range cl.Labels {
+			labels[l.Key] = l.Value
+		}
+		if err := d.Set("labels", labels); err != nil {
+			return diag.FromErr(err)
+		}
 
-	for _, l := range cl.Labels {
-		labels[l.Key] = l.Value
+		tflog.Trace(ctx, "Setting NamespaceExclusions ... ")
+		// Set NamespaceExclusions
+		namespace_exclusions := make([]interface{}, len(cl.NamespaceExclusions))
+
+		for i, ne := range cl.NamespaceExclusions {
+			namespace_exclusion := make(map[string]interface{})
+			namespace_exclusion["match"] = ne.Match
+			namespace_exclusion["type"] = ne.Type
+			namespace_exclusions[i] = namespace_exclusion
+		}
+
+		if err := d.Set("namespace_exclusion", namespace_exclusions); err != nil {
+			return diag.FromErr(err)
+		}
+
 	}
-	if err := d.Set("labels", labels); err != nil {
-		return diag.FromErr(err)
-	}
-
-	tflog.Trace(ctx, "Setting NamespaceExclusions ... ")
-	// Set NamespaceExclusions
-	namespace_exclusions := make([]interface{}, len(cl.NamespaceExclusions))
-
-	for i, ne := range cl.NamespaceExclusions {
-		namespace_exclusion := make(map[string]interface{})
-		namespace_exclusion["match"] = ne.Match
-		namespace_exclusion["type"] = ne.Type
-		namespace_exclusions[i] = namespace_exclusion
-	}
-
-	if err := d.Set("namespace_exclusion", namespace_exclusions); err != nil {
-		return diag.FromErr(err)
-	}
-
-	tflog.Trace(ctx, "Setting Id ... ")
-	//d.SetId(cl.ID)
 	tflog.Trace(ctx, "Done with resourceClusterRead ... ")
 	return diags
 }
