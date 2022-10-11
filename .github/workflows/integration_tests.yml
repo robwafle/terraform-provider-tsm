@@ -86,6 +86,7 @@ jobs:
 
       - name: point .terraform.rc to correct path in GitHub workspace.
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: ${{env.GITHUB_WORKSPACE}}
         run: |
           sed -i "s|/workspaces/terraform-provider-tsm|$GITHUB_WORKSPACE|g" ./.terraform.rc
 
