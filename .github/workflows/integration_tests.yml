@@ -82,7 +82,12 @@ jobs:
       - 
         name: Build
         run: make build
-        working-directory: ./
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+
+      - name: point .terraform.rc to correct path in GitHub workspace.
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          sed -i "s|/workspaces/terraform-provider-tsm|$GITHUB_WORKSPACE|g" ./.terraform.rc
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
