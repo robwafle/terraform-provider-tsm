@@ -137,7 +137,7 @@ jobs:
         continue-on-error: true
 
       - name: Terraform Plan Updates Status 
-        if: steps.plan.outcome == 'failure'
+        if: steps.plan_updates.outcome == 'failure'
         run: exit 1
         
       - name: Terraform Apply Updates
