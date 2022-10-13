@@ -61,4 +61,13 @@ cp ../../.terraform.rc $HOME/.terraform.rc
 export TF_CLI_CONFIG_FILE="$HOME/.terraform.rc"
 
 # enable debugging to troubleshoot provider issues
-export TF_LOG=TRACE
+export TF_LOG_PROVIDER_TSM=TRACE
+
+# write json logs which are easy to parse
+export TF_LOG_PATH=tflog.json
+
+# transform logs into actual json array to parse with jq
+jq -s '.' tflog.json > tflog-array.json
+
+# parse logs with jq
+cat tflog.array.json | jq '.[] | select(.["@module"] !="provider.terraform-provider-azurerm_v2.66.0_x5" and .["@level"] =="trace")'

@@ -35,6 +35,7 @@ terraform.rc
 
 tfplan
 tfplan.txt
+tflog.*
 .terraform.lock.hcl
 secrets
 azclisecrets
