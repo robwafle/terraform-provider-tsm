@@ -4,7 +4,6 @@ import (
 	"context"
 	tc "terraform-provider-tsm/plugin/client"
 
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
@@ -15,7 +14,7 @@ func dataSourceGlobalNamespace() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"last_updated": {
 				Type:     schema.TypeString,
@@ -97,74 +96,15 @@ func dataSourceGlobalNamespace() *schema.Resource {
 func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
 
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
+	id := d.Get("id").(string)
 
-	id := d.Id()
-
-	GlobalNamespace, err := c.GetGlobalNamespace(ctx, id)
+	globalNamespace, err := c.GetGlobalNamespace(ctx, id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	tflog.Debug(ctx, "Setting Root Level Fields ... ")
-	if err := d.Set("id", GlobalNamespace.ID); err != nil {
-		return diag.FromErr(err)
-	}
+	diags := MapSchemaFromGlobalNamespace(globalNamespace, d)
 
-	if err := d.Set("name", GlobalNamespace.Name); err != nil {
-		return diag.FromErr(err)
-	}
-
-	if err := d.Set("display_name", GlobalNamespace.DisplayName); err != nil {
-		return diag.FromErr(err)
-	}
-
-	if err := d.Set("domain_name", GlobalNamespace.DomainName); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("use_shared_gateway", GlobalNamespace.UseSharedGateway); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("mtls_enforced", GlobalNamespace.MtlsEnforced); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("ca_type", GlobalNamespace.CaType); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("ca", GlobalNamespace.Ca); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("description", GlobalNamespace.Description); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("color", GlobalNamespace.Color); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("version", GlobalNamespace.Version); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("api_discovery_enabled", GlobalNamespace.ApiDiscoveryEnabled); err != nil {
-		return diag.FromErr(err)
-	}
-
-	tflog.Debug(ctx, "Setting MatchConditions ... ")
-	// Set NamespaceExclusions
-	// namespace_exclusions := make([]map[string]any, 0)
-
-	// for _, ne := range cl.NamespaceExclusions {
-	// 	namespace_exclusion := make(map[string]any)
-	// 	namespace_exclusion["match"] = ne.Match
-	// 	namespace_exclusion["type"] = ne.Type
-	// 	namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
-	// }
-
-	// if err := d.Set("namespace_exclusions", namespace_exclusions); err != nil {
-	// 	return diag.FromErr(err)
-	// }
-	d.SetId(id)
-
-	tflog.Debug(ctx, "Done with resourceGlobalNamespaceRead ... ")
 	return diags
 }
 

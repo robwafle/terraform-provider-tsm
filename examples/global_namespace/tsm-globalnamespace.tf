@@ -8,7 +8,7 @@ resource "tsm_globalnamespace" "default" {
   api_discovery_enabled = true
   ca_type               = "PreExistingCA"
   ca                    = "default"
-  description           = "created via terraform"
+  description           = "created via terraform -- silly rob update the terraform don't use the UI"
   color                 = "#00FF00"
   version               = "2.0"
 
@@ -27,6 +27,12 @@ resource "tsm_globalnamespace" "default" {
   }
 }
 
-//data "tsm_globalnamespace" "default" {
-//}
+data "tsm_globalnamespace" "default" {
+  depends_on = [tsm_globalnamespace.default]
+  id = "global-default"
+}
 
+
+output "tsm_globalnamespace" {
+  value = data.tsm_globalnamespace.default
+}

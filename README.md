@@ -47,27 +47,27 @@ $ terraform init && terraform apply
 
 # Unit testing
 In vscode, you can right click and choose "Go: Test Function At Cursor" or run the tests manually.
-```
+```shell
 go test terraform-provider-tsm/plugin/provider -v
 ```
 
 # Publish a version
-```
+```shell
 git tag v0.0.80; git push origin v0.0.80 --force
 ```
 
-# use the .terraform.rc development overrides (from example folder):
-cp ../../.terraform.rc $HOME/.terraform.rc
-export TF_CLI_CONFIG_FILE="$HOME/.terraform.rc"
-
-# enable debugging to troubleshoot provider issues
-export TF_LOG_PROVIDER_TSM=TRACE
-
 # write json logs which are easy to parse
+```shell
+export TF_LOG=JSON
 export TF_LOG_PATH=tflog.json
+```
 
 # transform logs into actual json array to parse with jq
-jq -s '.' tflog.json > tflog-array.json
+```shell
+jq -s '.' tflog.json > tflog.array.json
+```
 
 # parse logs with jq
-cat tflog.array.json | jq '.[] | select(.["@module"] !="provider.terraform-provider-azurerm_v2.66.0_x5" and .["@level"] =="trace")'
+```shell
+cat tflog.array.json | jq '.[] | select(.["@module"] !="provider.terraform-provider-azurerm_v2.66.0_x5" and .["@level"] =="trace")' > tflog.minus.azurerm.json
+```

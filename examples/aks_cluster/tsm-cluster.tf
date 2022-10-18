@@ -24,3 +24,13 @@ resource "tsm_cluster" "aks" {
   # }
 
 }
+
+
+data "tsm_cluster" "aks" {
+  depends_on = [tsm_cluster.aks]
+  id = azurerm_kubernetes_cluster.k8s.name
+}
+
+output "tsm_cluster" {
+  value = data.tsm_cluster.aks
+}
