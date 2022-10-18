@@ -20,8 +20,8 @@
     },
     "remoteUser": "vscode",
     "remoteEnv": {
-		"TSM_HOST": "${localEnv:TSM_HOST}",
-		"TSM_APIKEY": "${localEnv:TSM_APIKEY}",
+        "TSM_HOST": "${localEnv:TSM_HOST}",
+        "TSM_APIKEY": "${localEnv:TSM_APIKEY}",
         "TF_VAR_appId": "${localEnv:TF_VAR_APPID}",
         "TF_VAR_password": "${localEnv:TF_VAR_PASSWORD}",
         "TF_VAR_tenantId": "${localEnv:TF_VAR_TENANTID}",

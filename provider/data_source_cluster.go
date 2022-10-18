@@ -15,7 +15,7 @@ func dataSourceCluster() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"last_updated": {
 				Type:     schema.TypeString,
@@ -85,9 +85,6 @@ func dataSourceCluster() *schema.Resource {
 func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
 
-	// Warning or errors can be collected in a slice type
-	var diags diag.Diagnostics
-
 	id := d.Id()
 
 	cl, err := c.GetCluster(ctx, id)
@@ -95,61 +92,7 @@ func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interf
 		return diag.FromErr(err)
 	}
 
-	// Set top level values
-	if err := d.Set("id", cl.ID); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("display_name", cl.DisplayName); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("token", cl.Token); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("auto_install_servicemesh", cl.AutoInstallServiceMesh); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("description", cl.Description); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("enable_namespace_exclusions", cl.EnableNamespaceExclusions); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("state", cl.Status.State); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("sync_state", cl.SyncStatus.State); err != nil {
-		return diag.FromErr(err)
-	}
-
-	// Set labels
-	labels := make(map[string]any)
-
-	for _, l := range cl.Labels {
-		labels[l.Key] = l.Value
-	}
-	if err := d.Set("labels", labels); err != nil {
-		return diag.FromErr(err)
-	}
-
-	// Set NamespaceExclusions
-	// namespace_exclusions := make([]map[string]any, 0)
-
-	// for _, ne := range cl.NamespaceExclusions {
-	// 	namespace_exclusion := make(map[string]any)
-	// 	namespace_exclusion["match"] = ne.Match
-	// 	namespace_exclusion["type"] = ne.Type
-	// 	namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
-	// }
-
-	// if err := d.Set("namespace_exclusions", namespace_exclusions); err != nil {
-	// 	return diag.FromErr(err)
-	// }
-
-	// if err := d.Set("cluster", clustermap); err != nil {
-	// 	return diag.FromErr(err)
-	// }
-
-	d.SetId(id)
+	diags := MapSchemaFromCluster(cl, d)
 
 	return diags
 }

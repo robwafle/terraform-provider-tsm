@@ -36,9 +36,6 @@ resource "azurerm_kubernetes_cluster" "k8s" {
     type = "SystemAssigned"
   }
 
-  role_based_access_control {
-    enabled = true
-  }
 
   tags = {
     environment = "Demo"

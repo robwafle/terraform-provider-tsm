@@ -21,4 +21,12 @@ resource "tsm_globalnamespace" "default" {
   }
 }
 
+data "tsm_globalnamespace" "default" {
+  depends_on = [tsm_globalnamespace.default]
+  id = "global-default"
+}
+
+output "tsm_globalnamespace" {
+  value = data.tsm_globalnamespace.default
+}
 

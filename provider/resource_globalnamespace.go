@@ -178,65 +178,6 @@ func resourceGlobalNamespaceCreate(ctx context.Context, d *schema.ResourceData, 
 	return diags
 
 }
-
-func MapGlobalNamespaceFromSchema(d *schema.ResourceData) (*tc.GlobalNamespace, error) {
-	ID := d.Get("id").(string)
-	Name := d.Get("name").(string)
-	DisplayName := d.Get("display_name").(string)
-	DomainName := d.Get("domain_name").(string)
-	UseSharedGateway := d.Get("use_shared_gateway").(bool)
-	MtlsEnforced := d.Get("mtls_enforced").(bool)
-	CaType := d.Get("ca_type").(string)
-	Ca := d.Get("ca").(string)
-	Description := d.Get("description").(string)
-	Color := d.Get("color").(string)
-	Version := d.Get("version").(string)
-	ApiDiscoveryEnabled := d.Get("api_discovery_enabled").(bool)
-
-	_match_conditions := d.Get("match_condition").(*schema.Set).List()
-	MatchConditions := []tc.MatchCondition{}
-
-	for _, match_condition := range _match_conditions {
-		mc, lbok := match_condition.(map[string]any)
-		if lbok {
-			NamespaceMatchCondition := tc.NamespaceMatchCondition{
-				Match: mc["namespace_match"].(string),
-				Type:  mc["namespace_type"].(string),
-			}
-
-			ClusterMatchCondition := tc.ClusterMatchCondition{
-				Type:  mc["cluster_type"].(string),
-				Match: mc["cluster_match"].(string),
-			}
-
-			MatchCondition := tc.MatchCondition{
-				NamespaceMatchCondition: NamespaceMatchCondition,
-				ClusterMatchCondition:   ClusterMatchCondition,
-			}
-
-			MatchConditions = append(MatchConditions, MatchCondition)
-		}
-	}
-
-	globalNamespace := tc.GlobalNamespace{
-		ID:                  ID,
-		Name:                Name,
-		DisplayName:         DisplayName,
-		DomainName:          DomainName,
-		UseSharedGateway:    UseSharedGateway,
-		MtlsEnforced:        MtlsEnforced,
-		CaType:              CaType,
-		Ca:                  Ca,
-		Description:         Description,
-		Color:               Color,
-		Version:             Version,
-		MatchConditions:     MatchConditions,
-		ApiDiscoveryEnabled: ApiDiscoveryEnabled,
-	}
-
-	return &globalNamespace, nil
-}
-
 func resourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
 

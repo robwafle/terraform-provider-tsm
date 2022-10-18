@@ -3,3 +3,5 @@ dist
 terraform-provider-*/**
 plugin
 bin/**
+service-principal-terraform/*.pem
+service-principal-terraform/login.sh
