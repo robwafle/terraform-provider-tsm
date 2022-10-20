@@ -17,11 +17,6 @@ func dataSourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"last_updated": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Computed: true,
-			},
 			"display_name": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -46,6 +41,10 @@ func dataSourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"sync_state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"tags": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -61,7 +60,7 @@ func dataSourceCluster() *schema.Resource {
 				},
 			},
 
-			"namespace_exclusion": {
+			"namespace_exclusions": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -85,14 +84,20 @@ func dataSourceCluster() *schema.Resource {
 func dataSourceClusterRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
 
-	id := d.Id()
+	var diags diag.Diagnostics
 
-	cl, err := c.GetCluster(ctx, id)
-	if err != nil {
+	id := d.Get("id").(string)
+
+	cluster, err := c.GetCluster(ctx, id)
+	if err != nil && err.Error() != "404" {
 		return diag.FromErr(err)
 	}
 
-	diags := MapSchemaFromCluster(cl, d)
+	if cluster != nil {
+		diags = MapSchemaFromCluster(cluster, d)
+	} else {
+		d.SetId("")
+	}
 
 	return diags
 }

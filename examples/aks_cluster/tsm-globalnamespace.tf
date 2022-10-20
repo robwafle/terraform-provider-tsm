@@ -27,6 +27,7 @@ data "tsm_globalnamespace" "default" {
 }
 
 output "tsm_globalnamespace" {
+ 
   value = data.tsm_globalnamespace.default
 }
 

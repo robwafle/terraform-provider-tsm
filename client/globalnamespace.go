@@ -11,28 +11,37 @@ import (
 )
 
 // GetGlobalNamespaces - Returns list of GlobalNamespaces
-func (c *Client) GetGlobalNamespaces(ctx context.Context) (*GlobalNamespaces, error) {
-	tflog.Debug(ctx, "Getting Global Namespaces ...")
-	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces", c.HostURL), nil)
-	if err != nil {
-		return nil, err
-	}
+// func (c *Client) GetGlobalNamespaces(ctx context.Context) ([]*GlobalNamespace, error) {
+// 	tflog.Debug(ctx, "Getting Global Namespaces ...")
+// 	req, err := http.NewRequestWithContext(ctx, "GET", fmt.Sprintf("%s/tsm/v1alpha1/global-namespaces", c.HostURL), nil)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	body, err := c.doRequest(req, nil)
-	if err != nil {
-		return nil, err
-	}
+// 	body, err := c.doRequest(req, nil)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	GlobalNamespaces := GlobalNamespaces{}
-	err = json.Unmarshal(body, &GlobalNamespaces)
-	if err != nil {
-		return nil, err
-	}
+// 	globalNamespaceList := make([]string, 0)
+// 	err = json.Unmarshal(body, &globalNamespaceList)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &GlobalNamespaces, nil
-}
+// 	length := len(globalNamespaceList)
+// 	globalNamespaces := make([]*GlobalNamespace, length)
+// 	for i := 0; i < length; i++ {
+// 		globalNamespace, err := c.GetGlobalNamespace(ctx, globalNamespaceList[i])
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		globalNamespaces = append(globalNamespaces, globalNamespace)
+// 	}
 
-// GetGlobalNamespace - Returns specific GlobalNamespace (no auth required)
+// 	return globalNamespaces, nil
+// }
+
 func (c *Client) GetGlobalNamespace(ctx context.Context, id string) (*GlobalNamespace, error) {
 
 	tflog.Debug(ctx, fmt.Sprintf("Getting Global Namespace: %s", id))
@@ -46,15 +55,21 @@ func (c *Client) GetGlobalNamespace(ctx context.Context, id string) (*GlobalName
 		return nil, err
 	}
 
-	GlobalNamespace := GlobalNamespace{}
-	err = json.Unmarshal(body, &GlobalNamespace)
+	globalNamespace := GlobalNamespace{}
+	err = json.Unmarshal(body, &globalNamespace)
 	if err != nil {
 		return nil, err
 	}
-	strBody := string(body)
-	tflog.Debug(ctx, fmt.Sprintf("Global Namespace:%s", strBody))
 
-	return &GlobalNamespace, nil
+	tflog.Debug(ctx, fmt.Sprintf("Got Global Namespace: %s", globalNamespace.ID))
+	globalNamespaceJSON, err := json.Marshal(globalNamespace)
+	if err != nil {
+		return nil, err
+	}
+
+	tflog.Debug(ctx, fmt.Sprintf("Global Namespace JSON: %s", globalNamespaceJSON))
+
+	return &globalNamespace, nil
 }
 
 func If[T any](cond bool, vtrue, vfalse T) T {
