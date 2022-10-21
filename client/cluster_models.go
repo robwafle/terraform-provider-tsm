@@ -1,17 +1,5 @@
 package client
 
-// Order -
-type Order struct {
-	ID    int         `json:"id,omitempty"`
-	Items []OrderItem `json:"items,omitempty"`
-}
-
-// OrderItem -
-type OrderItem struct {
-	Cluster  Cluster `json:"cluster"`
-	Quantity int     `json:"quantity"`
-}
-
 // type Tag struct {
 // 	Name string `json:"name"`
 // }

@@ -8,6 +8,27 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+func flattenMatchConditionData(matchConditions *[]tc.MatchCondition) []interface{} {
+	if matchConditions != nil {
+		match_conditions := make([]interface{}, len(*matchConditions), len(*matchConditions))
+
+		for i, match_condition := range *matchConditions {
+			m := make(map[string]interface{})
+
+			m["cluster_type"] = match_condition.ClusterMatchCondition.Type
+			m["cluster_match"] = match_condition.ClusterMatchCondition.Match
+			m["namespace_type"] = match_condition.NamespaceMatchCondition.Type
+			m["namespace_match"] = match_condition.NamespaceMatchCondition.Match
+
+			match_conditions[i] = m
+		}
+
+		return match_conditions
+	}
+
+	return make([]interface{}, 0)
+}
+
 func dataSourceGlobalNamespace() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGlobalNamespaceRead,
@@ -18,7 +39,6 @@ func dataSourceGlobalNamespace() *schema.Resource {
 			},
 			"last_updated": {
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 			"name": {
@@ -61,7 +81,7 @@ func dataSourceGlobalNamespace() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"match_condition": {
+			"match_conditions": {
 				Type:     schema.TypeSet,
 				Computed: true,
 				Elem: &schema.Resource{
@@ -96,14 +116,20 @@ func dataSourceGlobalNamespace() *schema.Resource {
 func dataSourceGlobalNamespaceRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	c := m.(*tc.Client)
 
+	var diags diag.Diagnostics
+
 	id := d.Get("id").(string)
 
 	globalNamespace, err := c.GetGlobalNamespace(ctx, id)
-	if err != nil {
+	if err != nil && err.Error() != "404" {
 		return diag.FromErr(err)
 	}
 
-	diags := MapSchemaFromGlobalNamespace(globalNamespace, d)
+	if globalNamespace != nil {
+		diags = MapSchemaFromGlobalNamespace(globalNamespace, d)
+	} else {
+		d.SetId("")
+	}
 
 	return diags
 }

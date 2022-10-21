@@ -48,6 +48,8 @@ func (c *Client) GetCluster(ctx context.Context, id string) (*Cluster, error) {
 	if err != nil {
 		return nil, err
 	}
+	strBody := string(body)
+	tflog.Debug(ctx, fmt.Sprintf("Cluster:%s", strBody))
 
 	return &cluster, nil
 }

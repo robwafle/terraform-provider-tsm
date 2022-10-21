@@ -18,10 +18,21 @@ resource "tsm_cluster" "aks" {
     L4 = "value four"
   }
 
-  # namespace_exclusion {
-  #   match = "default"
-  #   type = "EXACT"
-  # }
+  namespace_exclusion {
+    match = "one"
+    type = "EXACT"
+  }
+
+  namespace_exclusion {
+    match = "two"
+    type = "EXACT"
+  }
+
+  namespace_exclusion {
+    match = "three"
+    type = "EXACT"
+  }
+
 
 }
 

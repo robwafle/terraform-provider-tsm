@@ -69,60 +69,109 @@ func MapSchemaFromGlobalNamespace(globalNamespace *tc.GlobalNamespace, d *schema
 
 	var diags diag.Diagnostics
 
-	if err := d.Set("id", globalNamespace.ID); err != nil {
-		return diag.FromErr(err)
+	if globalNamespace == nil {
+		return diag.Errorf("globalNamespace was nil in MapSchemaFromGlobalNamespace()")
 	}
 
 	if err := d.Set("name", globalNamespace.Name); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
 
 	if err := d.Set("display_name", globalNamespace.DisplayName); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
 
 	if err := d.Set("domain_name", globalNamespace.DomainName); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("use_shared_gateway", globalNamespace.UseSharedGateway); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("mtls_enforced", globalNamespace.MtlsEnforced); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("ca_type", globalNamespace.CaType); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("ca", globalNamespace.Ca); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("description", globalNamespace.Description); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("color", globalNamespace.Color); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("version", globalNamespace.Version); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
+
 	if err := d.Set("api_discovery_enabled", globalNamespace.ApiDiscoveryEnabled); err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
 	}
 
-	// Set NamespaceExclusions
-	// namespace_exclusions := make([]map[string]any, 0)
+	matchConditions := flattenMatchConditionData(&globalNamespace.MatchConditions)
+	if err := d.Set("match_conditions", matchConditions); err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Warning,
+			Summary:  "Unable to update field in cluster see error.",
+			Detail:   err.Error(),
+		})
+	}
 
-	// for _, ne := range cl.NamespaceExclusions {
-	// 	namespace_exclusion := make(map[string]any)
-	// 	namespace_exclusion["match"] = ne.Match
-	// 	namespace_exclusion["type"] = ne.Type
-	// 	namespace_exclusions = append(namespace_exclusions, namespace_exclusion)
-	// }
-
-	// if err := d.Set("namespace_exclusions", namespace_exclusions); err != nil {
-	// 	return diag.FromErr(err)
-	// }
-	d.SetId(globalNamespace.ID)
+	// get global namespace does NOT return an ID, but it matches the name
+	d.SetId(globalNamespace.Name)
 
 	// TODO: Understand returning diags better, we don't appear to be using this object
 	// // https://developer.hashicorp.com/terraform/tutorials/providers/provider-debug

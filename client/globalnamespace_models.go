@@ -1,9 +1,5 @@
 package client
 
-type GlobalNamespaces struct {
-	IDs []string `json:"ids"`
-}
-
 type GlobalNamespace struct {
 	ID                  string           `json:"id,omitempty"`
 	Name                string           `json:"name"`
