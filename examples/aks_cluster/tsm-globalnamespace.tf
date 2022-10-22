@@ -1,9 +1,9 @@
 resource "tsm_globalnamespace" "default" {
   depends_on = [tsm_cluster.aks]
 
-  name                  = "global-default"
-  display_name          = "global-default"
-  domain_name           = "global-default.gns"
+  name                  = "global-default-aks"
+  display_name          = "global-default-aks"
+  domain_name           = "global-default-aks.gns"
   use_shared_gateway    = true
   mtls_enforced         = true
   api_discovery_enabled = true
@@ -27,7 +27,6 @@ data "tsm_globalnamespace" "default" {
 }
 
 output "tsm_globalnamespace" {
- 
   value = data.tsm_globalnamespace.default
 }
 

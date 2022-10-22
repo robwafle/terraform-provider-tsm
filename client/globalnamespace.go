@@ -124,7 +124,7 @@ func (c *Client) DeleteGlobalNamespace(ctx context.Context, id string, authToken
 	}
 
 	_, err = c.doRequest(req, authToken)
-	if err != nil {
+	if err != nil && err.Error() != "404" {
 		return nil, err
 	}
 

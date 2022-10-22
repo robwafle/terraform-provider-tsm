@@ -6,19 +6,8 @@ TSM_APIKEY: <its-a-secret>
 
 # command to rebuild, install and test
 ```
-pushd ../../terraform-provider-tsm ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
+pushd ../.. ; if make build; then echo "built!"; else popd; fi && popd && rm tflog.json ; terraform plan -out=tfplan
 ```
-
-# clean up if it all goes wrong
-```
-rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan; rm tfplan.txt ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; 
-```
-
-# plan, if you get a checksum error you didn't update the version in Makefile.
-```
-rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan -out=tfplan; terraform show tfplan | tee tfplan.txt; 
-```
-
 
 # apply
 ```
