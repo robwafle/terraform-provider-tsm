@@ -146,16 +146,16 @@ func (c *Client) DeleteCluster(ctx context.Context, id string, authToken *string
 		return nil, err
 	}
 
-	body, err := c.doRequest(req, authToken)
-	if err != nil {
+	_, err = c.doRequest(req, authToken)
+	if err != nil && err.Error() != "404" {
 		return nil, err
 	}
 
-	newCluster := Cluster{}
-	err = json.Unmarshal(body, &newCluster)
-	if err != nil {
-		return nil, err
-	}
+	// newCluster := Cluster{}
+	// err = json.Unmarshal(body, &newCluster)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	return &newCluster, nil
+	return nil, nil
 }
