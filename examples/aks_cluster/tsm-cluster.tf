@@ -1,5 +1,3 @@
-
-
 resource "tsm_cluster" "aks" {
   depends_on   = [null_resource.kubectl]
   display_name = azurerm_kubernetes_cluster.k8s.name

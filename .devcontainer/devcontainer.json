@@ -30,6 +30,6 @@
         "ARM_CLIENT_SECRET": "${localEnv:TF_VAR_PASSWORD}",
         "ARM_TENANT_ID": "${localEnv:TF_VAR_TENANTID}",
         "ARM_SUBSCRIPTION_ID": "${localEnv:TF_VAR_SUBSCRIPTIONID}",
-        "HOST_VAR":"/host/var"
-	}
+        "HOST_VAR": "/host/var"
+    }
 }
