@@ -1,5 +1,6 @@
 # Visit https://goreleaser.com for documentation on how to customize this
 # behavior.
+project_name: tanzu_service_provider
 before:
   hooks:
     # this is just an example and not a requirement for provider building/publishing
@@ -10,6 +11,7 @@ builds:
     # usage by users in CI/CD systems like Terraform Cloud where
     # they are unable to install libraries.
     - CGO_ENABLED=0
+  gobinary: "go1.19.2"
   mod_timestamp: '{{ .CommitTimestamp }}'
   flags:
     - -trimpath
