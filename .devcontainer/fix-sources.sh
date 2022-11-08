@@ -2,23 +2,23 @@ mkdir ~/solution
 cd ~/solution/
 
 cat << EOF > ~/solution/sources.list
-deb http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse
+deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs) main restricted universe multiverse
 
-deb http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse
+#deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-updates main restricted universe multiverse
+#deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-updates main restricted universe multiverse
 
-deb http://archive.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ focal-security main restricted universe multiverse
+#deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-security main restricted universe multiverse
+#deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-security main restricted universe multiverse
 
-deb http://archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse
-deb-src http://archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse
+#deb http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-backports main restricted universe multiverse
+#deb-src http://archive.ubuntu.com/ubuntu/ $(lsb_release -cs)-backports main restricted universe multiverse
 
-deb http://archive.canonical.com/ubuntu focal partner
-deb-src http://archive.canonical.com/ubuntu focal partner
+deb http://archive.canonical.com/ubuntu $(lsb_release -cs) partner
+deb-src http://archive.canonical.com/ubuntu $(lsb_release -cs) partner
 EOF
 
-sudo rm /etc/apt/sources.list
-sudo cp ~/solution/sources.list /etc/apt/sources.list
+rm /etc/apt/sources.list
+cp ~/solution/sources.list /etc/apt/sources.list
 
-#sudo mv /etc/apt/sources.list.d/* ~/solution
+# mv /etc/apt/sources.list.d/* ~/solution

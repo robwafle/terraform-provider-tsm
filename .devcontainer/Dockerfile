@@ -1,20 +1,28 @@
 ARG VERSION="1.19.2" # go version
-FROM mcr.microsoft.com/vscode/devcontainers/base:dev-hirsute
+FROM mcr.microsoft.com/vscode/devcontainers/base:dev-focal
 
 COPY fix-sources.sh .
 RUN chmod +x fix-sources.sh
 RUN ./fix-sources.sh
+RUN apt-key adv --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80
 
-RUN sudo apt update
+# RUN apt-get update -y
+# RUN apt-get install curl ca-certificates wget apt-transport-https golang-go gnupg software-properties-common -y
+# Install CTC certificates
+ADD ctccacerts.crt /usr/local/share/ca-certificates/ctccacerts.crt
+RUN chmod 644 /usr/local/share/ca-certificates/ctccacerts.crt & update-ca-certificates
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ctccacerts.pem
+
+RUN apt update
 
 # install kubectl
 RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$my_arch/kubectl" && curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/$my_arch/kubectl.sha256"
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin
 
-RUN apt update -y \
-    && apt install -y python3-pip \
-    && pip install pre-commit
+# RUN apt update -y \
+#     && apt install -y python3-pip \
+#     && pip install pre-commit
 
 # Install Az Cli
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -22,7 +30,7 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # [Optional] Uncomment the next lines to use go get to install anything else you need
 
 ENV VERSION="1.19.2"
-RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && wget --verbose --show-progress -L "https://golang.org/dl/go${VERSION}.linux-$my_arch.tar.gz" && tar -xf "go${VERSION}.linux-$my_arch.tar.gz"
+RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && wget --verbose --show-progress --no-check-certificate -L "https://golang.org/dl/go${VERSION}.linux-$my_arch.tar.gz" && tar -xf "go${VERSION}.linux-$my_arch.tar.gz"
 #RUN chown -R root:root ./go
 RUN mv -v go /usr/local
 
@@ -34,17 +42,18 @@ RUN chmod +x /root/.bash_profile
 ENV GOPATH=$HOME/go
 ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
-RUN go install github.com/goreleaser/goreleaser@latest
+RUN echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | tee /etc/apt/sources.list.d/goreleaser.list
+RUN apt update && apt install goreleaser -y
 
-RUN sudo apt-key adv --refresh-keys --keyserver keyserver.ubuntu.com
 
 # Terraform
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+RUN echo "deb [trusted=yes signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
 RUN apt update && apt install terraform=1.0.5
 
 # install terraform docs
-RUN go install github.com/terraform-docs/terraform-docs@v0.16.0
+# RUN go install github.com/terraform-docs/terraform-docs@v0.16.0
+RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) && wget --verbose --show-progress --no-check-certificate -O "terraform-docs.tar.gz" -L "https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-$(uname)-$my_arch.tar.gz" && tar -xf "terraform-docs.tar.gz" && chmod +x ./terraform-docs && mv terraform-docs /usr/local/terraform-docs
 
 
 # RUN go get -x <your-dependency-or-tool>
