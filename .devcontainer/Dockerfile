@@ -4,9 +4,9 @@ ARG GO_VERSION="1.19.2"
 ARG TERRAFORM_VERSION="1.0.5"
 
 COPY fix-sources.sh .
-RUN chmod +x fix-sources.sh
-RUN ./fix-sources.sh
-RUN apt-key adv --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80
+RUN chmod +x fix-sources.sh \
+    && ./fix-sources.sh \
+    && apt-key adv --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80
 
 ADD ctccacerts.crt /usr/local/share/ca-certificates/ctccacerts.crt
 RUN chmod 644 /usr/local/share/ca-certificates/ctccacerts.crt & update-ca-certificates
@@ -28,17 +28,6 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 COPY .bash_profile /root/.bash_profile
 RUN chmod +x /root/.bash_profile
 
-# update env during docker build
-ENV GOPATH=$HOME/go
-ENV PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-
-# force latest go installation against goreleaser
-RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
-    && wget --verbose --show-progress --no-check-certificate -L "https://golang.org/dl/go${GO_VERSION}.linux-$my_arch.tar.gz" \
-    && tar -xf "go${GO_VERSION}.linux-$my_arch.tar.gz" \
-    && rm -rvf /usr/local/go \
-    && mv -v go /usr/local
-
 # Terraform
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg \
     && echo "deb [trusted=yes signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
@@ -57,8 +46,22 @@ RUN apt update -y \
     && apt install -y python3-pip \
     && pip3 install pre-commit
 
-# install goreleaser
-RUN go install github.com/goreleaser/goreleaser@latest
+# Install goreleaser
+RUN echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | tee /etc/apt/sources.list.d/goreleaser.list \
+    && apt update \
+    && apt install goreleaser -y
+
+# force latest go installation against goreleaser
+RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
+    && wget --verbose --show-progress --no-check-certificate -L "https://golang.org/dl/go${GO_VERSION}.linux-$my_arch.tar.gz" \
+    && tar -xf "go${GO_VERSION}.linux-$my_arch.tar.gz" \
+    && rm -rvf /usr/local/go \
+    && mv -v go /usr/local
+
+# point go to new installation directory
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$HOME/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # RUN go get -x <your-dependency-or-tool>
 CMD ["bash", "-l"]
