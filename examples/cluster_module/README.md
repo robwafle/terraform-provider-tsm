@@ -1,25 +1,31 @@
-# env vars to set on your local system BEFORE opening visual studio.:
-```
-TSM_HOST: https://prod-<number>.nsxservicemesh.vmware.com
-TSM_APIKEY: <its-a-secret>
-```
+## Requirements
 
-# command to rebuild, install and test
-```
-pushd ../../terraform-provider-tsm ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
-```
+| Name | Version |
+|------|---------|
+| <a name="requirement_tsm"></a> [tsm](#requirement\_tsm) | 0.0.1 |
 
+## Providers
 
-```
-rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan -var-file=example.tfvars -out=tfplan; terraform show tfplan | tee tfplan.txt;  terraform apply -input=false tfplan
-```
+| Name | Version |
+|------|---------|
+| <a name="provider_tsm"></a> [tsm](#provider\_tsm) | 0.0.1 |
 
-```
-terraform apply -input=false tfplan
-```
+## Modules
 
+No modules.
 
-```
-kubectl --context docker-desktop apply -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/operator-deployment.yaml
-```
+## Resources
 
+| Name | Type |
+|------|------|
+| [tsm_cluster.cluster](https://registry.terraform.io/providers/robwafle/tsm/0.0.1/docs/resources/cluster) | resource |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_clusters"></a> [clusters](#input\_clusters) | n/a | <pre>map(object({<br>    display_name                = string<br>    description                 = string<br>    kubernetes_context          = string<br>    auto_install_servicemesh    = bool<br>    enable_namespace_exclusions = bool<br>    tags                        = list(string)<br>    labels                      = map(string)<br>    namespace_exclusions = map(object({<br>      match = string<br>      type  = string<br>    }))<br>  }))</pre> | n/a | yes |
+
+## Outputs
+
+No outputs.

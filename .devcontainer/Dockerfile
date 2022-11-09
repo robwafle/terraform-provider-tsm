@@ -1,3 +1,4 @@
+ARG USERNAME=vscode
 FROM mcr.microsoft.com/vscode/devcontainers/base:dev-focal
 
 ARG GO_VERSION="1.19.2"
@@ -58,10 +59,12 @@ RUN my_arch=$(arch | sed s/aarch64/arm64/ | sed s/x86_64/amd64/) \
     && rm -rvf /usr/local/go \
     && mv -v go /usr/local
 
-# point go to new installation directory
-ENV GOROOT=/usr/local/go
-ENV GOPATH=$HOME/go
-ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+RUN curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+COPY .bash_profile /home/vscode/.bash_profile
+RUN chmod +x /home/vscode/.bash_profile
+
+USER $USERNAME
 
 # RUN go get -x <your-dependency-or-tool>
 CMD ["bash", "-l"]

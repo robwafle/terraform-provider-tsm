@@ -1,0 +1,8 @@
+formatter: "markdown"
+
+output:
+  file: "README.md"
+  mode: replace
+  template: |-
+    {{ .Content }}
+    {{/** End of file fixer */}}

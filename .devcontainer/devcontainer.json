@@ -3,7 +3,11 @@
     //"image": "mcr.microsoft.com/devcontainers/base:ubuntu", // Any generic, debian-based image.
     "build": {
         "dockerfile": "Dockerfile",
-        "args": { "GO_VERSION": "1.19.2", "TERRAFORM_VERSION": "1.0.5" }
+        "args": {
+            "GO_VERSION": "1.19.2",
+            "TERRAFORM_VERSION": "1.0.5",
+            "USERNAME": "vscode"
+        }
     },
     "features": {
         // "ghcr.io/devcontainers/features/azure-cli:1": {
@@ -23,6 +27,7 @@
         // }
     },
     "remoteUser": "vscode",
+    "containerUser": "vscode",
     "remoteEnv": {
         "TSM_HOST": "${localEnv:TSM_HOST}",
         "TSM_APIKEY": "${localEnv:TSM_APIKEY}",

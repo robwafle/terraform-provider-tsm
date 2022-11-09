@@ -1,52 +1,38 @@
-# env vars to set on your local system BEFORE opening visual studio.:
-```
-TSM_HOST: https://prod-<number>.nsxservicemesh.vmware.com
-TSM_APIKEY: <its-a-secret>
-```
+## Requirements
 
-# command to rebuild, install and test
-```
-pushd ../../terraform-provider-tsm ; make install && popd; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan
-```
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14 |
+| <a name="requirement_tsm"></a> [tsm](#requirement\_tsm) | ~> 0.0.1 |
 
-# clean up if it all goes wrong
-```
-rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan; rm tfplan.txt ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; 
-```
+## Providers
 
-# plan, if you get a checksum error you didn't update the version in Makefile.
-```
-rm terraform.tfstate.backup; rm terraform.tfstate; rm tfplan ; export TF_LOG=TRACE; rm .terraform.lock.hcl ; terraform init -upgrade ; terraform plan -out=tfplan; terraform show tfplan | tee tfplan.txt; 
-```
+| Name | Version |
+|------|---------|
+| <a name="provider_tsm"></a> [tsm](#provider\_tsm) | 0.0.81 |
 
+## Modules
 
-# apply
-```
-terraform apply -input=false tfplan
-```
+No modules.
 
-# destroy
-```
-terraform apply -input=false -destroy
-```
+## Resources
 
-# manual deploy
-```
-kubectl apply -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/operator-deployment.yaml
-```
+| Name | Type |
+|------|------|
+| [tsm_globalnamespace.default](https://registry.terraform.io/providers/robwafle/tsm/latest/docs/resources/globalnamespace) | resource |
+| [tsm_globalnamespaces.default](https://registry.terraform.io/providers/robwafle/tsm/latest/docs/data-sources/globalnamespaces) | data source |
 
-# manual delete
-```
-kubectl delete --ignore-not-found=true -f https://prod-4.nsxservicemesh.vmware.com/cluster-registration/k8s/client-cluster-uninstall.yaml
-```
+## Inputs
 
-# kubectl run tmp-shell --rm -i --tty --image nicolaka/netshoot
-```
-kubectl run netshoot --rm -i --tty --image nicolaka/netshoot
-```
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_appId"></a> [appId](#input\_appId) | Azure Kubernetes Service Cluster service principal | `any` | n/a | yes |
+| <a name="input_clusterPrefix"></a> [clusterPrefix](#input\_clusterPrefix) | n/a | `string` | `"tsm-one"` | no |
+| <a name="input_password"></a> [password](#input\_password) | Azure Kubernetes Service Cluster password | `any` | n/a | yes |
+| <a name="input_tenantId"></a> [tenantId](#input\_tenantId) | n/a | `any` | n/a | yes |
 
+## Outputs
 
-# if you want to spin up a container on the host's network namespace.
-```
- kubectl run netshoot --rm -i --tty --overrides='{"spec": {"hostNetwork": true}}' --image nicolaka/netshoot
-```
+| Name | Description |
+|------|-------------|
+| <a name="output_tsm_globalnamespaces"></a> [tsm\_globalnamespaces](#output\_tsm\_globalnamespaces) | n/a |

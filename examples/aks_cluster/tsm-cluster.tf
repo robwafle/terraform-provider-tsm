@@ -18,17 +18,17 @@ resource "tsm_cluster" "aks" {
 
   namespace_exclusion {
     match = "one"
-    type = "EXACT"
+    type  = "EXACT"
   }
 
   namespace_exclusion {
     match = "two"
-    type = "EXACT"
+    type  = "EXACT"
   }
 
   namespace_exclusion {
     match = "three"
-    type = "EXACT"
+    type  = "EXACT"
   }
 
 
@@ -37,7 +37,7 @@ resource "tsm_cluster" "aks" {
 
 data "tsm_cluster" "aks" {
   depends_on = [tsm_cluster.aks]
-  id = azurerm_kubernetes_cluster.k8s.name
+  id         = azurerm_kubernetes_cluster.k8s.name
 }
 
 output "tsm_cluster" {

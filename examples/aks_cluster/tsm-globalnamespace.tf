@@ -23,7 +23,7 @@ resource "tsm_globalnamespace" "default" {
 
 data "tsm_globalnamespace" "default" {
   depends_on = [tsm_globalnamespace.default]
-  id = "global-default"
+  id         = "global-default"
 }
 
 output "tsm_globalnamespace" {
