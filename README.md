@@ -71,3 +71,5 @@ jq -s '.' tflog.json > tflog.array.json
 ```shell
 cat tflog.array.json | jq '.[] | select(.["@module"] !="provider.terraform-provider-azurerm_v2.66.0_x5" and .["@level"] =="trace")' > tflog.minus.azurerm.json
 ```
+
+# edited on phone
